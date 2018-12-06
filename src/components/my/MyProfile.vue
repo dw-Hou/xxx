@@ -53,6 +53,7 @@
           </div>
           <el-cascader
             :options="collegelist"
+            v-model="specialty"
             style="width: calc(100% - 100px)">
           </el-cascader>
         </div>
@@ -122,18 +123,22 @@ export default {
         email: ''
       },
       lablist: [],
-      collegelist: []
+      collegelist: [],
+      specialty: ''
     }
   },
   created: function () {
     let user = this.$parent.access
-    this.$http.get('/api/users/2?accessToken=' + user).then(res => {
+    this.$http.get('/api/users/' + this.$parent.userId + '?accessToken=' + user).then(res => {
       console.log(res)
       this.message = res.body.value
       if (this.message.gender) {
         this.gender = '1'
       } else {
         this.gender = '0'
+      }
+      if (this.message.specialty) {
+        this.specialty = [this.message.college, this.message.specialty]
       }
     })
     this.$http.get('/api/labs?accessToken=' + this.$parent.access).then(res => {
@@ -162,6 +167,10 @@ export default {
         this.message.gender = true
       } else {
         this.message.gender = false
+      }
+      if (this.specialty) {
+        this.message.college = this.specialty[0]
+        this.message.specialty = this.specialty[1]
       }
       this.$http.put('/api/users?accessToken=' + user, this.message).then(res => {
         console.log(res)

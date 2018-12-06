@@ -90,11 +90,11 @@
         </div>
         <div class="button-group">
           <el-button type="success" size="small" @click="addLab(2)">添加字典</el-button>
-          <el-button type="danger" size="small" @click="deleteall(0)">删除字典</el-button>
+          <el-button type="danger" size="small" @click="deleteall(2)">删除字典</el-button>
         </div>
         <el-table
           ref="table3"
-          :data="rolelist"
+          :data="specialtylist"
           tooltip-effect="dark">
           <el-table-column
             type="selection">
@@ -102,6 +102,13 @@
           <el-table-column
             type="index"
             align="center">
+          </el-table-column>
+          <el-table-column
+            label="学院名称"
+            align="center">
+            <template slot-scope="scope">
+              {{getcollegebyid(scope.row.college)}}
+            </template>
           </el-table-column>
           <el-table-column
             prop="name"
@@ -116,11 +123,11 @@
               <el-button
                 size="mini"
                 type="primary"
-                @click="editspecialty(scope.$index, scope.row)">编辑</el-button>
+                @click="edits(scope.$index, scope.row, 2)">编辑</el-button>
               <el-button
                 size="mini"
                 type="danger"
-                @click="deletespecialty(scope.$index, scope.row)">删除</el-button>
+                @click="deletes(scope.$index, scope.row, 2)">删除</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -214,6 +221,17 @@
           <span>类型：</span>
           <el-input v-model="keytype" size="medium" disabled style="width: 300px;margin-bottom: 24px"></el-input>
         </div>
+        <div class="input-group" v-show="specialty">
+          <span>学院：</span>
+          <el-select v-model="specialtyvalue" style="width: 300px;margin-bottom: 24px">
+            <el-option
+              v-for="item in collegelist"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id">
+            </el-option>
+          </el-select>
+        </div>
         <div class="input-group">
           <span>键值：</span>
           <el-input v-model="keyvalue" size="medium" style="width: 300px"></el-input>
@@ -229,6 +247,17 @@
         <div class="input-group">
           <span>类型：</span>
           <el-input v-model="edittype" size="medium" disabled style="width: 300px;margin-bottom: 24px"></el-input>
+        </div>
+        <div class="input-group" v-show="specialty">
+          <span>学院：</span>
+          <el-select v-model="specialtyvalue" style="width: 300px;margin-bottom: 24px">
+            <el-option
+              v-for="item in collegelist"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id">
+            </el-option>
+          </el-select>
         </div>
         <div class="input-group">
           <span>键值：</span>
@@ -263,13 +292,23 @@ export default {
       edittype: '',
       editvalue: '',
       editid: 0,
-      deletelist: []
+      deletelist: [],
+      specialty: false,
+      specialtyvalue: '',
+      specialtylist: []
     }
   },
   methods: {
     addLab: function (index) {
       this.keytype = this.dictionary[index]
       this.chosen = index
+      console.log(index)
+      if (index === 2) {
+        this.specialty = true
+        this.specialtyvalue = ''
+      } else {
+        this.specialty = false
+      }
       this.add = true
     },
     cancel: function () {
@@ -280,6 +319,10 @@ export default {
       this.editflag = false
     },
     save: function () {
+      if (this.chosen === 2) {
+        this.addspecialty()
+        return 0
+      }
       let url = this.dictionaryurl[this.chosen]
       this.$http.post('/api/' + url + '?accessToken=' + this.$parent.access, {name: this.keyvalue}).then(res => {
         console.log(res)
@@ -310,6 +353,10 @@ export default {
       })
     },
     editsave: function () {
+      if (this.chosen === 2) {
+        this.editspecialty()
+        return 0
+      }
       let url = this.dictionaryurl[this.chosen]
       this.$http.put('/api/' + url + '?accessToken=' + this.$parent.access, {id: this.editid, name: this.editvalue}).then(res => {
         console.log(res)
@@ -332,7 +379,7 @@ export default {
         } else {
           this.$message({
             message: res.body.message,
-            type: 'danger',
+            type: 'error',
             showClose: true
           })
           this.keyvalue = ''
@@ -426,6 +473,12 @@ export default {
       this.editvalue = row.name
       this.edittype = this.dictionary[num]
       this.editid = row.id
+      if (num === 2) {
+        this.specialty = true
+        this.specialtyvalue = row.college
+      } else {
+        this.specialty = false
+      }
       this.chosen = num
     },
     deleteall: function (num) {
@@ -462,6 +515,62 @@ export default {
           case 4: { this.getevent(); break }
         }
       }
+    },
+    addspecialty: function () {
+      this.$http.post('/api/specialty?accessToken=' + this.$parent.access, {name: this.keyvalue, college: this.specialtyvalue}).then(res => {
+        if (res.body.succeed) {
+          this.$message({
+            message: '创建成功',
+            type: 'success',
+            showClose: true
+          })
+          this.getspecialty()
+          this.cancel()
+        } else {
+          this.$message({
+            message: res.body.message,
+            type: 'error',
+            showClose: true
+          })
+        }
+      })
+    },
+    getspecialty: function () {
+      this.$http.get('/api/specialty?accessToken=' + this.$parent.access).then(res => {
+        if (res.body.succeed) {
+          this.specialtylist = res.body.value
+        }
+      })
+    },
+    getcollegebyid: function (id) {
+      let flag = ''
+      this.collegelist.forEach(level => {
+        if (level.id === id) {
+          flag = level.name
+          return 0
+        }
+      })
+      return flag
+    },
+    editspecialty: function () {
+      this.$http.put('/api/specialty?accessToken=' + this.$parent.access, {id: this.editid, college: this.specialtyvalue, name: this.editvalue}).then(res => {
+        if (res.body.succeed) {
+          this.$message({
+            message: '修改成功',
+            type: 'success',
+            showClose: true
+          })
+          this.getspecialty()
+          this.keyvalue = ''
+          this.editcancel()
+        } else {
+          this.$message({
+            message: res.body.message,
+            type: 'error',
+            showClose: true
+          })
+        }
+      })
     }
   },
   mounted: function () {
@@ -469,6 +578,7 @@ export default {
     this.getcollege()
     this.getaward()
     this.getevent()
+    this.getspecialty()
   }
 }
 </script>
