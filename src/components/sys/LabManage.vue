@@ -116,11 +116,11 @@
               <el-button
                 size="mini"
                 type="primary"
-                @click="edits(scope.$index, scope.row, 2)">编辑</el-button>
+                @click="editspecialty(scope.$index, scope.row)">编辑</el-button>
               <el-button
                 size="mini"
                 type="danger"
-                @click="deletes(scope.$index, scope.row, 2)">删除</el-button>
+                @click="deletespecialty(scope.$index, scope.row)">删除</el-button>
             </template>
           </el-table-column>
         </el-table>

@@ -41,37 +41,20 @@
           <el-select v-model="message.lab" clearable placeholder="请选择" style="width: calc(100% - 100px)">
             <el-option
               v-for="item in lablist"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value">
+              :key="item.id"
+              :label="item.name"
+              :value="item.id">
             </el-option>
           </el-select>
         </div>
         <div class="profile-group">
           <div class="title-block">
-            <span>学院：</span>
+            <span>学院/专业：</span>
           </div>
-          <el-select v-model="message.college" clearable placeholder="请选择" style="width: calc(100% - 100px)">
-            <el-option
-              v-for="item in collegelist"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value">
-            </el-option>
-          </el-select>
-        </div>
-        <div class="profile-group">
-          <div class="title-block">
-            <span>专业：</span>
-          </div>
-          <el-select v-model="message.specialty" clearable placeholder="请选择" style="width: calc(100% - 100px)">
-            <el-option
-              v-for="item in specialtylist"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value">
-            </el-option>
-          </el-select>
+          <el-cascader
+            :options="collegelist"
+            style="width: calc(100% - 100px)">
+          </el-cascader>
         </div>
         <div class="profile-group">
           <div class="title-block">
@@ -138,24 +121,8 @@ export default {
         phone: '',
         email: ''
       },
-      lablist: [
-        {
-          value: '1',
-          label: '黄金糕'
-        }
-      ],
-      collegelist: [
-        {
-          value: '1',
-          label: '黄金糕'
-        }
-      ],
-      specialtylist: [
-        {
-          value: '1',
-          label: '黄金糕'
-        }
-      ]
+      lablist: [],
+      collegelist: []
     }
   },
   created: function () {
@@ -167,6 +134,24 @@ export default {
         this.gender = '1'
       } else {
         this.gender = '0'
+      }
+    })
+    this.$http.get('/api/labs?accessToken=' + this.$parent.access).then(res => {
+      // console.log(res)
+      if (res.body.succeed) {
+        this.lablist = res.body.value
+      } else {
+        this.$message({
+          message: res.body.message,
+          type: 'danger',
+          showClose: true
+        })
+      }
+    })
+    this.$http.get('/api/colleges/specialties?accessToken=' + this.$parent.access).then(res => {
+      if (res.body.succeed) {
+        this.collegelist = res.body.value
+        console.log(this.collegelist)
       }
     })
   },

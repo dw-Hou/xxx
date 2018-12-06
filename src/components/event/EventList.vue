@@ -17,7 +17,7 @@
         prop="sponsor"
         align="center"
         label="主办方"
-        width="100">
+        width="200">
       </el-table-column>
       <el-table-column
         align="center"
@@ -180,9 +180,8 @@ export default {
         return 0
       }
       var request = {
-        event: this.row.id,
-        poster: parseInt(this.$parent.userId),
-        award: this.value
+        eventId: this.row.id,
+        awardId: this.value
       }
       console.log(request)
       this.$http.post('/api/requests?accessToken=' + this.$parent.access, request).then(res => {
