@@ -31,7 +31,7 @@
             prop="sponsor"
             label="主办方"
             align="center"
-            width="100">
+            width="200">
           </el-table-column>
           <el-table-column
             label="比赛级别"

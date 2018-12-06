@@ -52,7 +52,7 @@
               <span slot="title">&nbsp;&nbsp;个人中心</span>
             </template>
             <el-menu-item index="Myprofile"><Icon type="ios-home" /> 我的信息</el-menu-item>
-            <el-menu-item index="MyReview"><Icon type="logo-foursquare" /> 我的事件</el-menu-item>
+            <el-menu-item index="MyReview"><Icon type="logo-foursquare" /> 我的审批</el-menu-item>
             <el-menu-item index="MyRequests"><Icon type="ios-plane" /> 我的申报</el-menu-item>
           </el-submenu>
         </el-menu>
