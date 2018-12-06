@@ -9,7 +9,7 @@
         <el-button style="margin-left: 24px" type="text" @click="small"><Icon type="md-menu" style="color:white"/></el-button>
         <el-dropdown trigger="click" style="margin-right: 24px" @command="setting">
           <span class="el-dropdown-link" style="color: white;cursor: pointer">
-            {{username}}<i class="el-icon-arrow-down el-icon--right"></i>
+            {{realname}}<i class="el-icon-arrow-down el-icon--right"></i>
           </span>
           <el-dropdown-menu slot="dropdown">
             <el-dropdown-item command="1">个人信息</el-dropdown-item>
@@ -79,8 +79,9 @@ export default {
       access: '',
       isCollapse: false,
       title: true,
-      username: '测试人员',
-      userId: ''
+      username: '',
+      userId: '',
+      realname: ''
     }
   },
   methods: {
@@ -118,8 +119,12 @@ export default {
   created: function () {
     this.access = dao.getCookie('ACCESS_TOKEN')
     this.userId = dao.getCookie('ACCESS_USERID')
-    let access = this.access
-    console.log(access)
+    this.$http.get('/api/users/' + this.userId + '?accessToken=' + this.access).then(res => {
+      console.log(res)
+      if (res.body.succeed) {
+        this.realname = res.body.value.name
+      }
+    })
   }
 }
 // this.$http.get('/api/labs?accessToken=' + this.$parent.access).then(res => {
