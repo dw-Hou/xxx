@@ -20,6 +20,11 @@
         </el-input>
       </div>
       <div class="input-group">
+        <el-input placeholder="请输入真实姓名" v-model="realname" >
+          <Icon slot="prefix" type="ios-contact" />
+        </el-input>
+      </div>
+      <div class="input-group">
         <el-button type="primary" style="width: 100%" @click="register">注册</el-button>
       </div>
       <div class="input-group" id="flex-right">
@@ -36,7 +41,8 @@ export default {
     return {
       username: '',
       password: '',
-      confirm_password: ''
+      confirm_password: '',
+      realname: ''
     }
   },
   http: {
@@ -74,10 +80,20 @@ export default {
         })
         return 0
       }
+      if (this.realname === '') {
+        this.$message({
+          message: '真实姓名不可为空',
+          type: 'error',
+          showClose: true
+        })
+        return 0
+      }
       var message = {
         userId: this.username,
-        password: this.password
+        password: this.password,
+        name: this.realname
       }
+      console.log(message)
       this.$http.post('/api/users', message).then(response => {
         console.log(response)
         if (response.body.succeed) {

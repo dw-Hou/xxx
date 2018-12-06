@@ -76,6 +76,7 @@ export default {
         console.log(response)
         if (response.body.succeed) {
           dao.setCookie('ACCESS_TOKEN', response.body.value.accessToken)
+          dao.setCookie('ACCESS_USERID', response.body.value.userId)
           this.$router.push({name: 'Main'})
         } else {
           this.$message({
@@ -85,9 +86,9 @@ export default {
           })
         }
       }, response => {
-        if (this.remember) {
-          dao.setCookie('API_user', response.body.accessToken)
-        }
+        // if (this.remember) {
+        //   dao.setCookie('API_user', response.body.accessToken)
+        // }
         this.$message({
           message: '连接失败，请检查网络连接',
           type: 'error',

@@ -79,7 +79,8 @@ export default {
       access: '',
       isCollapse: false,
       title: true,
-      username: '测试人员'
+      username: '测试人员',
+      userId: ''
     }
   },
   methods: {
@@ -116,11 +117,9 @@ export default {
   },
   created: function () {
     this.access = dao.getCookie('ACCESS_TOKEN')
+    this.userId = dao.getCookie('ACCESS_USERID')
     let access = this.access
     console.log(access)
-    // this.$http.get('/api/users?accessToken=' + access).then(res => {
-    //   console.log(res)
-    // })
   }
 }
 // this.$http.get('/api/labs?accessToken=' + this.$parent.access).then(res => {

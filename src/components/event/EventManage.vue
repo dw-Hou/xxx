@@ -7,10 +7,11 @@
       <div>
         <div>
           <el-button type="success" size="mini" @click="openaddwindow">添加事件</el-button>
-          <el-button type="danger" size="mini">删除事件</el-button>
+          <el-button type="danger" size="mini" @click="deleteall">删除事件</el-button>
         </div>
         <el-table
           :data="eventlist"
+          ref="eventTable"
           stripe
           style="width: 100%">
           <el-table-column
@@ -27,34 +28,32 @@
             min-width="180">
           </el-table-column>
           <el-table-column
-            prop="num"
+            prop="sponsor"
             label="主办方"
             align="center"
             width="100">
           </el-table-column>
           <el-table-column
-            prop="level"
             label="比赛级别"
             align="center"
             width="100">
+            <template slot-scope="scop">
+              {{getlevelbyid(scop.row.scope)}}
+            </template>
           </el-table-column>
           <el-table-column
-            prop="num"
+            prop="requestsCount"
             label="申报人数"
             align="center"
             width="100">
           </el-table-column>
           <el-table-column
-            prop="name"
-            label="发起人"
-            align="center"
-            width="100">
-          </el-table-column>
-          <el-table-column
-            prop="time"
             align="center"
             label="比赛时间"
             width="100">
+            <template slot-scope="scope">
+              {{getdate(scope.row.date)}}
+            </template>
           </el-table-column>
           <el-table-column
             label="操作"
@@ -64,35 +63,35 @@
               <el-button
                 size="mini"
                 type="primary"
-                @click="submit(scope.$index, scope.row)">编辑</el-button>
+                @click="edits(scope.$index, scope.row)">编辑</el-button>
               <el-button
                 size="mini"
                 type="danger"
-                @click="handleDelete(scope.$index, scope.row)">删除</el-button>
+                @click="deletes(scope.$index, scope.row)">删除</el-button>
             </template>
           </el-table-column>
         </el-table>
       </div>
     </el-card>
-    <el-dialog title="事件添加" :visible.sync="addwindow" width="500px">
+    <el-dialog title="事件添加" :visible.sync="addwindow" width="500px" :before-close="cancel">
       <div class="dialog">
         <div class="input-group">
           <div class="right-span">
             <span>比赛名称：</span>
           </div>
-          <el-input v-model="eventname" size="medium" style="width: 300px;"></el-input>
+          <el-input v-model="newevent.name" size="medium" style="width: 300px;"></el-input>
         </div>
         <div class="input-group">
           <div class="right-span">
             <span>主办方：</span>
           </div>
-          <el-input v-model="eventsponsor" size="medium" style="width: 300px"></el-input>
+          <el-input v-model="newevent.sponsor" size="medium" style="width: 300px"></el-input>
         </div>
         <div class="input-group">
           <div class="right-span">
             <span>比赛级别：</span>
           </div>
-          <el-select v-model="eventlevel" placeholder="请选择" style="width: 300px">
+          <el-select v-model="newevent.scope" placeholder="请选择" style="width: 300px">
             <el-option
               v-for="item in levels"
               :key="item.id"
@@ -105,7 +104,12 @@
           <div class="right-span">
             <span>比赛时间：</span>
           </div>
-          <el-input v-model="eventtime" size="medium" style="width: 300px"></el-input>
+          <el-date-picker
+            style="width: 300px"
+            v-model="newevent.date"
+            type="date"
+            placeholder="选择日期">
+          </el-date-picker>
         </div>
         <div class="input-group">
           <div class="right-span">
@@ -122,8 +126,65 @@
         </div>
       </div>
       <div slot="footer" class="dialog-footer">
-        <el-button >取 消</el-button>
+        <el-button @click="cancel">取 消</el-button>
         <el-button type="primary" @click="addevent">确 定</el-button>
+      </div>
+    </el-dialog>
+    <el-dialog title="事件编辑" :visible.sync="editwindow" width="500px" :before-close="canceledit">
+      <div class="dialog">
+        <div class="input-group">
+          <div class="right-span">
+            <span>比赛名称：</span>
+          </div>
+          <el-input v-model="editevent.name" size="medium" style="width: 300px;"></el-input>
+        </div>
+        <div class="input-group">
+          <div class="right-span">
+            <span>主办方：</span>
+          </div>
+          <el-input v-model="editevent.sponsor" size="medium" style="width: 300px"></el-input>
+        </div>
+        <div class="input-group">
+          <div class="right-span">
+            <span>比赛级别：</span>
+          </div>
+          <el-select v-model="editevent.scope" placeholder="请选择" style="width: 300px">
+            <el-option
+              v-for="item in levels"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id">
+            </el-option>
+          </el-select>
+        </div>
+        <div class="input-group">
+          <div class="right-span">
+            <span>比赛时间：</span>
+          </div>
+          <el-date-picker
+            style="width: 300px"
+            v-model="editevent.date"
+            type="date"
+            placeholder="选择日期">
+          </el-date-picker>
+        </div>
+        <div class="input-group">
+          <div class="right-span">
+            <span>奖项选择：</span>
+          </div>
+          <el-select v-model="editevent.awardsList" multiple placeholder="请选择" style="width: 300px">
+            <el-option
+              v-for="item in awards"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id">
+            </el-option>
+          </el-select>
+        </div>
+      </div>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="canceledit">取 消</el-button>
+        <el-button type="primary" @click="saveedit">确 定</el-button>
       </div>
     </el-dialog>
   </div>
@@ -134,21 +195,20 @@ export default {
   name: 'EventManage',
   data () {
     return {
-      eventlist: [
-        {
-          name: 'xxx',
-          time: '1月1日',
-          level: 'xxx'
-        }
-      ],
+      eventlist: [],
       addwindow: false,
-      eventtime: '',
-      eventname: '',
-      eventsponsor: '',
-      eventlevel: '',
-      eventaward: '',
+      editwindow: false,
+      newevent: {
+        date: '',
+        name: '',
+        sponsor: '',
+        scope: ''
+      },
+      eventaward: [],
+      editevent: '',
       levels: [],
-      awards: []
+      awards: [],
+      editrow: ''
     }
   },
   methods: {
@@ -156,8 +216,8 @@ export default {
       this.addwindow = true
     },
     addevent: function () {
-      console.log(this.eventlevel)
-      console.log(this.eventaward)
+      // console.log(this.eventlevel)
+      // console.log(this.eventaward)
       if (this.eventname === '') {
         this.dangermessage('比赛名称不可为空')
         return 0
@@ -174,10 +234,23 @@ export default {
         this.dangermessage('比赛时间不可为空')
         return 0
       }
-      if (this.eventaward === '') {
+      if (this.eventaward.length === 0) {
         this.dangermessage('奖项选择不可为空')
         return 0
       }
+      this.$http.post('/api/events?accessToken=' + this.$parent.access, this.newevent).then(res => {
+        if (res.body.succeed) {
+          let index = res.body.value
+          this.$http.post('/api/events/' + index + '/awards?accessToken=' + this.$parent.access, this.eventaward).then(res => {
+            console.log(res)
+            if (res.body.succeed) {
+              this.successmessage('创建成功')
+              this.geteventlist()
+              this.cancel()
+            }
+          })
+        }
+      })
     },
     dangermessage: function (mess) {
       this.$message({
@@ -185,6 +258,93 @@ export default {
         type: 'error',
         showClose: true
       })
+    },
+    successmessage: function (mess) {
+      this.$message({
+        message: mess,
+        type: 'success',
+        showClose: true
+      })
+    },
+    getlevelbyid: function (id) {
+      let flag = ''
+      this.levels.forEach(level => {
+        if (level.id === id) {
+          flag = level.name
+          return 0
+        }
+      })
+      return flag
+    },
+    getdate: function (date) {
+      if (date) {
+        return date.substring(0, 10)
+      }
+    },
+    geteventlist: function () {
+      this.$http.get('/api/events?detail=true&accessToken=' + this.$parent.access).then(res => {
+        if (res.body.succeed) {
+          this.eventlist = res.body.value
+        }
+      })
+    },
+    deletes: function (index, row) {
+      this.$http.delete('/api/events/' + row.id + '?accessToken=' + this.$parent.access).then(res => {
+        if (res.body.succeed) {
+          this.geteventlist()
+          this.successmessage('删除成功')
+        } else {
+          this.dangermessage(res.body.message)
+        }
+      })
+    },
+    cancel: function () {
+      this.newevent = {
+        date: '',
+        name: '',
+        sponsor: '',
+        scope: ''
+      }
+      this.eventaward = []
+      this.addwindow = false
+    },
+    edits: function (index, row) {
+      this.editwindow = true
+      this.editevent = row
+      this.editrow = row
+      console.log(row)
+    },
+    canceledit: function () {
+      this.editwindow = false
+    },
+    saveedit: function () {
+      console.log(this.editevent !== this.row)
+      if (this.editevent !== this.row) {
+        this.$http.put('/api/events?accessToken=' + this.$parent.access).then(res => {
+          console.log(res)
+          if (res.body.succeed) {
+            this.successmessage('修改成功')
+            this.geteventlist()
+          } else {
+            this.dangermessage(res.body.message)
+          }
+        })
+      }
+    },
+    deleteall: function () {
+      let flag = false
+      this.$refs.eventTable.store.states.selection.forEach(row => {
+        this.$http.delete('/api/events/' + row.id + '?accessToken=' + this.$parent.access).then(res => {
+          if (!res.body.succeed) {
+            this.dangermessage(res.body.message)
+            flag = true
+          }
+        })
+      })
+      if (!flag) {
+        this.geteventlist()
+        this.successmessage('删除成功')
+      }
     }
   },
   created: function () {
@@ -198,6 +358,12 @@ export default {
       // console.log(res)
       if (res.body.succeed) {
         this.awards = res.body.value
+      }
+    })
+    this.$http.get('/api/events?detail=true&accessToken=' + this.$parent.access).then(res => {
+      console.log(res)
+      if (res.body.succeed) {
+        this.eventlist = res.body.value
       }
     })
   }
