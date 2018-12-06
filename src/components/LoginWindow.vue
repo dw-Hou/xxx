@@ -77,7 +77,7 @@ export default {
         if (response.body.succeed) {
           dao.setCookie('ACCESS_TOKEN', response.body.value.accessToken)
           dao.setCookie('ACCESS_USERID', response.body.value.userId)
-          this.$router.push({name: 'Main'})
+          this.$router.push({path: '/index'})
         } else {
           this.$message({
             message: '用户名或密码错误',

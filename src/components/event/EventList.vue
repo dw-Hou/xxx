@@ -181,10 +181,12 @@ export default {
       }
       var request = {
         event: this.row.id,
-        poster: this.$parent.userId,
+        poster: parseInt(this.$parent.userId),
         award: this.value
       }
+      console.log(request)
       this.$http.post('/api/requests?accessToken=' + this.$parent.access, request).then(res => {
+        console.log(res)
         if (res.body.succeed) {
           this.successmessage('申报成功')
           this.cancel()

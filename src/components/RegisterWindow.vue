@@ -97,7 +97,7 @@ export default {
       this.$http.post('/api/users', message).then(response => {
         console.log(response)
         if (response.body.succeed) {
-          this.$router.push({name: 'Main'})
+          this.$router.push({path: '/index'})
         } else {
           this.$message({
             message: response.body.message,
