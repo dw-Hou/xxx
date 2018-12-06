@@ -210,6 +210,7 @@ export default {
     },
     submit: function (index, row) {
       this.editwindow = true
+      this.editrole.name = this.rolelist[index].name
       this.tempclick = {
         index: index,
         row: row
