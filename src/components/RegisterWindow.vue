@@ -97,7 +97,12 @@ export default {
       this.$http.post('/api/users', message).then(response => {
         console.log(response)
         if (response.body.succeed) {
-          this.$router.push({path: '/index'})
+          this.$message({
+            message: '注册成功',
+            type: 'success',
+            showClose: true
+          })
+          this.$router.push({path: '/login'})
         } else {
           this.$message({
             message: response.body.message,

@@ -34,7 +34,7 @@
             <el-menu-item index="/RoleManage"><Icon type="ios-man" /> 角色管理</el-menu-item>
             <el-menu-item index="/UserManage"><Icon type="ios-contacts" /> 用户管理</el-menu-item>
             <el-menu-item index="LabManage"><Icon type="ios-flask" /> 字典管理</el-menu-item>
-            <el-menu-item index="LogManage"><Icon type="ios-clipboard" /> 日志管理</el-menu-item>
+            <!--<el-menu-item index="LogManage"><Icon type="ios-clipboard" /> 日志管理</el-menu-item>-->
           </el-submenu>
           <el-submenu index="2">
             <template slot="title">

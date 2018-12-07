@@ -8,48 +8,43 @@
       <div slot="header" class="clearfix">
         <span>功能列表</span>
       </div>
-      <el-table
-        ref="multipleTable"
-        :data="abilitylist"
-        tooltip-effect="dark"
-        style="width: 100%"
-        @selection-change="handleSelectionChange">
-        <el-table-column
-          type="selection"
-          width="55">
-        </el-table-column>
-        <el-table-column
-          prop="name"
-          label="功能"
-          align="center">
-        </el-table-column>
-        <el-table-column
-          label="操作"
-          align="center">
-          <template slot-scope="scope">
-            <el-button type="text" size="mini" @click="editability(scope.$index, scope.row)">编辑</el-button>
-          </template>
-        </el-table-column>
-      </el-table>
+      <el-tree :data="menulist" show-checkbox ref="tree" node-key="value">
+      </el-tree>
     </el-card>
     <el-dialog title="功能添加" :visible.sync="addwindow" width="500px">
       <div class="dialog">
         <div class="input-group">
           <div class="right-span">
-            <span>功能名称：</span>
+            <span>添加类型：</span>
           </div>
-          <el-input v-model="newability.name" size="medium" style="width: 300px;"></el-input>
+          <div style="width: 300px">
+            <el-radio v-model="radio" label="1" @change="change">添加根节点</el-radio>
+            <el-radio v-model="radio" label="2" @change="change">添加叶节点</el-radio>
+          </div>
+        </div>
+        <div class="input-group" v-show="leave" placeholder="请选择根节点">
+          <div class="right-span">
+            <span>根节点：</span>
+          </div>
+          <el-select style="width: 300px" v-model="gen">
+            <el-option
+              v-for="item in menulist"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value">
+            </el-option>
+          </el-select>
         </div>
         <div class="input-group">
           <div class="right-span">
-            <span>Token：</span>
+            <span>功能名称：</span>
           </div>
-          <el-input v-model="newability.name" size="medium" style="width: 300px;"></el-input>
+          <el-input v-model="name" size="medium" style="width: 300px;"></el-input>
         </div>
       </div>
       <div slot="footer" class="dialog-footer">
         <el-button @click="cancel">取 消</el-button>
-        <el-button type="primary" @click="addability">确 定</el-button>
+        <el-button type="primary" @click="addmenu">确 定</el-button>
       </div>
     </el-dialog>
   </div>
@@ -70,7 +65,12 @@ export default {
         serverPagination: '',
         page: '',
         itemsPerPage: ''
-      }
+      },
+      menulist: [],
+      radio: '1',
+      leave: false,
+      gen: '',
+      name: ''
     }
   },
   methods: {
@@ -79,9 +79,8 @@ export default {
     },
     cancel: function () {
       this.addwindow = false
-      this.newability = {
-        name: ''
-      }
+      this.gen = ''
+      this.name = ''
     },
     dangermessage: function (mess) {
       this.$message({
@@ -97,33 +96,60 @@ export default {
         showClose: true
       })
     },
-    addability: function () {
-      // if (this.newability.name == '') {
-      //   this.dangermessage('功能名不能为空')
-      //   return 0
-      // }
-      this.$http.post('/api/abilities?accessToken=' + this.$parent.access, this.newability).then(res => {
-        console.log(res)
+    addmenu: function () {
+      if (this.leave) {
+        this.$http.post('/api/menu?accessToken=' + this.$parent.access, {name: this.name, fatherid: this.gen}).then(res => {
+          if (res.body.succeed) {
+            this.successmessage('添加成功')
+            this.getmenulist()
+            this.cancel()
+          } else {
+            this.dangermessage(res.body.message)
+          }
+        })
+      } else {
+        this.$http.post('/api/menu?accessToken=' + this.$parent.access, {name: this.name, fatherid: null}).then(res => {
+          if (res.body.succeed) {
+            this.successmessage('添加成功')
+            this.getmenulist()
+            this.cancel()
+          } else {
+            this.dangermessage(res.body.message)
+          }
+        })
+      }
+    },
+    getmenulist: function () {
+      this.$http.get('/api/menu?accessToken=' + this.$parent.access).then(res => {
         if (res.body.succeed) {
-          this.successmessage('添加成功')
-          this.getabilitylist()
-          this.cancel()
+          this.menulist = res.body.value
         }
       })
     },
-    getabilitylist: function () {
-      this.$http.get('/api/menu?accessToken=' + this.$parent.access).then(res => {
-        if (res.body.succeed) {
-          this.abilitylist = res.body.value
-        }
+    change: function (row) {
+      this.leave = !this.leave
+    },
+    deleteall: function () {
+      var flag = false
+      this.$refs.tree.getCheckedNodes().forEach(row => {
+        this.$http.delete('/api/menu/' + row.value + '?accessToken=' + this.$parent.access).then(res => {
+          if (!res.body.succeed) {
+            flag = true
+          }
+        })
       })
+      if (!flag) {
+        this.successmessage('删除成功')
+        this.getmenulist()
+      } else {
+        this.dangermessage('删除失败')
+      }
     }
   },
   created: function () {
     this.$http.get('/api/menu?accessToken=' + this.$parent.access).then(res => {
-      console.log(res)
       if (res.body.succeed) {
-        this.abilitylist = res.body.value
+        this.menulist = res.body.value
       }
     })
   }

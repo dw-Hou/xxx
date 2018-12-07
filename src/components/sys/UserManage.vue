@@ -69,19 +69,19 @@
         <el-button type="primary" @click="adduser">确 定</el-button>
       </div>
     </el-dialog>
-        <el-dialog title="用户编辑" :visible.sync="editwindow" width="500px" :before-close="canceledit">
+    <el-dialog title="用户编辑" :visible.sync="editwindow" width="500px" :before-close="canceledit">
       <div class="dialog">
         <div class="input-group">
           <div class="right-span">
             <span>工号/学号：</span>
           </div>
-          <el-input v-model="edituser.schoolId" size="medium" style="width: 300px;"></el-input>
+          <el-input v-model="editschoolId" size="medium" style="width: 300px;"></el-input>
         </div>
         <div class="input-group">
           <div class="right-span">
             <span>姓名：</span>
           </div>
-          <el-input v-model="edituser.name" size="medium" style="width: 300px;"></el-input>
+          <el-input v-model="editname" size="medium" style="width: 300px;"></el-input>
         </div>
       </div>
       <div slot="footer" class="dialog-footer">
@@ -106,8 +106,9 @@ export default {
         pwd1: '',
         pwd2: ''
       },
-      edituser: '',
-      editrow: '',
+      edituser: {},
+      editschoolId: '',
+      editname: '',
       newpassword: '',
       oldpassword: ''
     }
@@ -199,14 +200,15 @@ export default {
     edits: function (index, row) {
       this.editwindow = true
       this.edituser = row
-      this.editrow = row
+      this.editschoolId = row.schoolId
+      this.editname = row.name
     },
     canceledit: function () {
       this.editwindow = false
     },
     saveedit: function () {
-      if (this.edituser !== this.row) {
-        this.$http.put('/apt/users?accessToken=' + this.$parent.access).then(res => {
+      if (this.editschoolId !== this.edituser.schoolId || this.editname !== this.edituser.name) {
+        this.$http.put('/api/users?accessToken=' + this.$parent.access, {schoolId: this.editschoolId, name: this.editname}).then(res => {
           console.log(res)
           if (res.body.succeed) {
             this.successmessage('修改成功')
@@ -216,9 +218,6 @@ export default {
           }
         })
       }
-      // if (this.newpassword !== '') {
-      //   this.$http.put('')
-      // }
     },
     deletes: function (index, row) {
       this.$http.delete('/api/users/' + row.id + '?accessToken=' + this.$parent.access).then(res => {
