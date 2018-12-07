@@ -20,41 +20,41 @@
     </div>
     <div id="main">
       <div id="left">
-        <el-menu default-active="/index" class="el-menu-vertical-demo" :collapse="isCollapse" router>
-          <el-menu-item index="/index">
-            <i class="el-icon-menu"></i>
-            <span slot="title">我的桌面</span>
-          </el-menu-item>
-          <el-submenu index="1">
+        <el-menu default-active="EventList" class="el-menu-vertical-demo" :collapse="isCollapse" router>
+          <!--<el-menu-item index="/index" v-if="menu[6]">-->
+            <!--<i class="el-icon-menu"></i>-->
+            <!--<span slot="title">我的桌面</span>-->
+          <!--</el-menu-item>-->
+          <el-submenu index="1" v-if="menu[1]">
             <template slot="title">
               <Icon type="ios-build" />
               <span slot="title">&nbsp;&nbsp;系统设置</span>
             </template>
-            <el-menu-item index="/FunctionManage"><Icon type="logo-buffer" /> 功能管理</el-menu-item>
-            <el-menu-item index="/RoleManage"><Icon type="ios-man" /> 角色管理</el-menu-item>
-            <el-menu-item index="/UserManage"><Icon type="ios-contacts" /> 用户管理</el-menu-item>
-            <el-menu-item index="LabManage"><Icon type="ios-flask" /> 字典管理</el-menu-item>
+            <el-menu-item v-if="menu[2]" index="/FunctionManage"><Icon type="logo-buffer" /> 功能管理</el-menu-item>
+            <el-menu-item v-if="menu[3]" index="/RoleManage"><Icon type="ios-man" /> 角色管理</el-menu-item>
+            <el-menu-item v-if="menu[4]" index="/UserManage"><Icon type="ios-contacts" /> 用户管理</el-menu-item>
+            <el-menu-item v-if="menu[5]" index="LabManage"><Icon type="ios-flask" /> 字典管理</el-menu-item>
             <!--<el-menu-item index="LogManage"><Icon type="ios-clipboard" /> 日志管理</el-menu-item>-->
           </el-submenu>
-          <el-submenu index="2">
+          <el-submenu index="2" v-if="menu[7]">
             <template slot="title">
               <Icon type="ios-paper-plane" />
               <span slot="title">&nbsp;&nbsp;事件申报</span>
             </template>
             <!--<el-menu-item index="SubmitEvent"><Icon type="ios-share-alt" /> 发起申报</el-menu-item>-->
-            <el-menu-item index="EventManage"><Icon type="ios-paper" /> 事件管理</el-menu-item>
-            <el-menu-item index="ReportManage"><Icon type="md-mail" /> 申报管理</el-menu-item>
-            <el-menu-item index="EventList"><Icon type="md-menu" /> 事件列表</el-menu-item>
-            <el-menu-item index="CreateReport"><Icon type="ios-browsers-outline" /> 创建报表</el-menu-item>
+            <el-menu-item v-if="menu[9]" index="EventManage"><Icon type="ios-paper" /> 事件管理</el-menu-item>
+            <el-menu-item v-if="menu[12]" index="ReportManage"><Icon type="md-mail" /> 申报管理</el-menu-item>
+            <el-menu-item v-if="menu[11]" index="EventList"><Icon type="md-menu" /> 事件列表</el-menu-item>
+            <el-menu-item v-if="menu[10]" index="CreateReport"><Icon type="ios-browsers-outline" /> 创建报表</el-menu-item>
           </el-submenu>
-          <el-submenu index="3">
+          <el-submenu index="3" v-if="menu[8]">
             <template slot="title">
               <Icon type="md-person" />
               <span slot="title">&nbsp;&nbsp;个人中心</span>
             </template>
-            <el-menu-item index="Myprofile"><Icon type="ios-home" /> 我的信息</el-menu-item>
-            <el-menu-item index="MyReview"><Icon type="logo-foursquare" /> 我的审批</el-menu-item>
-            <el-menu-item index="MyRequests"><Icon type="ios-plane" /> 我的申报</el-menu-item>
+            <el-menu-item v-if="menu[13]" index="Myprofile"><Icon type="ios-home" /> 我的信息</el-menu-item>
+            <el-menu-item v-if="menu[14]" index="MyReview"><Icon type="logo-foursquare" /> 我的审批</el-menu-item>
+            <el-menu-item v-if="menu[15]" index="MyRequests"><Icon type="ios-plane" /> 我的申报</el-menu-item>
           </el-submenu>
         </el-menu>
       </div>
@@ -82,7 +82,9 @@ export default {
       title: true,
       username: '',
       userId: '',
-      realname: ''
+      realname: '',
+      menu: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      test: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
     }
   },
   methods: {
@@ -125,6 +127,19 @@ export default {
       if (res.body.succeed) {
         this.realname = res.body.value.name
       }
+    })
+    this.$http.get('/api/users/' + this.userId + '/menu?accessToken=' + this.access).then(res => {
+      res.body.value.forEach(row => {
+        this.test[row.value] = 1
+        if (row.children.length > 0) {
+          row.children.forEach(row => {
+            this.test[row.value] = 1
+          })
+        }
+        console.log(this.menu)
+        this.menu = this.test
+      })
+      console.log(res)
     })
   }
 }

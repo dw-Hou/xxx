@@ -34,31 +34,29 @@
             <el-button
               size="mini"
               type="danger"
-              @click="handleDelete(scope.$index, scope.row)">权限管理</el-button>
+              @click="menu(scope.$index, scope.row)">权限管理</el-button>
             <el-button
               size="mini"
               type="success"
-              @click="handleDelete(scope.$index, scope.row)">用户添加</el-button>
+              @click="adduser(scope.$index, scope.row)">用户添加</el-button>
           </template>
         </el-table-column>
       </el-table>
     </el-card>
-    <el-card class="box-card">
+    <el-card class="box-card" style="min-width: 300px" v-show="addu">
       <div slot="header" class="clearfix">
         <span>用户列表</span>
-        <el-checkbox v-model="checked">只显示没有角色的用户</el-checkbox>
       </div>
       <div class="button-group">
-        <el-button type="success" size="small">添加角色</el-button>
-        <el-button type="danger" size="small">删除角色</el-button>
+        <el-button type="success" size="small" @click="addusers">添加用户</el-button>
+        <el-button type="danger" size="small" @click="deleteusers">删除用户</el-button>
       </div>
       <el-table
-        ref="multipleTable"
-        :data="rolelist"
+        ref="userroletable"
+        :data="roleuserlist"
         tooltip-effect="dark"
         style="width: 100%"
-        row-key="id"
-        @selection-change="handleSelectionChange">
+        row-key="schoolId">
         <el-table-column
           type="selection"
           width="55">
@@ -69,7 +67,7 @@
           align="center">
         </el-table-column>
         <el-table-column
-          prop="realname"
+          prop="name"
           label="姓名"
           align="center">
         </el-table-column>
@@ -89,7 +87,7 @@
         <el-button type="primary" @click="addrole">确 定</el-button>
       </div>
     </el-dialog>
-    <el-dialog title="内容编辑" :visible.sync="editwindow" width="500px">
+    <el-dialog title="内容编辑" :visible.sync="editwindow" width="500px" :before-close="editcancel">
       <div class="dialog">
         <div class="input-group">
           <div class="right-span">
@@ -101,6 +99,43 @@
       <div slot="footer" class="dialog-footer">
         <el-button @click="editcancel">取 消</el-button>
         <el-button type="primary" @click="edituser">确 定</el-button>
+      </div>
+    </el-dialog>
+    <el-dialog title="权限管理" :visible.sync="menumanage" width="500px" :before-close="menucancel">
+      <div>
+        <el-tree :data="menulist" show-checkbox ref="tree" node-key="value">
+        </el-tree>
+      </div>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="menucancel">取 消</el-button>
+        <el-button type="primary" @click="menuchange">确 定</el-button>
+      </div>
+    </el-dialog>
+    <el-dialog title="用户添加" :visible.sync="user" width="500px " :before-close="usercancel">
+      <el-table
+        ref="usertable"
+        :data="userlist"
+        row-key="id"
+        tooltip-effect="dark"
+        style="width: 100%">
+        <el-table-column
+          type="selection"
+          width="55">
+        </el-table-column>
+        <el-table-column
+          label="工号/学号"
+          prop="schoolId"
+          align="center">
+        </el-table-column>
+        <el-table-column
+          prop="name"
+          label="姓名"
+          align="center">
+        </el-table-column>
+      </el-table>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="usercancel">取 消</el-button>
+        <el-button type="primary" @click="userchoose">确 定</el-button>
       </div>
     </el-dialog>
   </div>
@@ -123,7 +158,16 @@ export default {
       tempclick: {
         index: '',
         row: ''
-      }
+      },
+      roleuserlist: [],
+      addu: false,
+      menumanage: false,
+      menulist: [],
+      activemenu: [],
+      activerole: '',
+      userlist: [],
+      user: false,
+      userrole: ''
     }
   },
   methods: {
@@ -215,10 +259,134 @@ export default {
         index: index,
         row: row
       }
+    },
+    adduser: function (index, row) {
+      this.addu = true
+      this.userrole = row.id
+      this.$http.get('/api/roles/' + row.id + '/users?accessToken=' + this.$parent.access).then(res => {
+        if (res.body.succeed) {
+          this.roleuserlist = res.body.value
+        } else {
+          this.dangermessage(res.body.message)
+        }
+      })
+    },
+    menu: function (index, row) {
+      this.menumanage = true
+      this.activerole = row.id
+      this.$http.get('/api/roles/' + row.id + '/menu?accessToken=' + this.$parent.access).then(res => {
+        if (res.body.succeed) {
+          var a = []
+          var i = 0
+          res.body.value.forEach(node => {
+            a[i++] = node.id
+          })
+          this.activemenu = a
+          this.$refs.tree.setCheckedKeys(a)
+        } else {
+          this.dangermessage(res.body.message)
+        }
+      })
+    },
+    menucancel: function () {
+      this.menumanage = false
+    },
+    menuchange: function () {
+      var flag = false
+      if (this.activemenu.length > 0) {
+        this.$http.post('/api/roles/' + this.activerole + '/menu/del?accessToken=' + this.$parent.access, this.activemenu).then(res => {
+          // console.log(res)
+          if (!res.body.succeed) {
+            flag = true
+          } else {
+            var a = []
+            var i = 0
+            this.$refs.tree.getCheckedNodes().forEach(node => {
+              a[i++] = node.value
+            })
+            this.$http.post('/api/roles/' + this.activerole + '/menu?accessToken=' + this.$parent.access, a).then(res => {
+              // console.log(res)
+              if (!res.body.succeed || flag) {
+                this.dangermessage('出现错误')
+              } else {
+                this.successmessage('修改成功')
+              }
+            })
+          }
+        })
+      } else {
+        var a = []
+        var i = 0
+        this.$refs.tree.getCheckedNodes().forEach(node => {
+          a[i++] = node.value
+        })
+        this.$http.post('/api/roles/' + this.activerole + '/menu?accessToken=' + this.$parent.access, a).then(res => {
+          // console.log(res)
+          if (!res.body.succeed || flag) {
+            this.dangermessage('出现错误')
+          } else {
+            this.successmessage('修改成功')
+          }
+        })
+      }
+      this.menucancel()
+    },
+    addusers: function () {
+      this.user = true
+    },
+    usercancel: function () {
+      this.user = false
+    },
+    userchoose: function () {
+      var flag = 0
+      console.log(this.userrole)
+      this.$refs.usertable.store.states.selection.forEach(row => {
+        this.$http.post('/api/users/' + row.id + '/roles?accessToken=' + this.$parent.access, [this.userrole]).then(res => {
+          flag++
+          if (flag === this.$refs.usertable.store.states.selection.length - 1) {
+            this.$http.get('/api/roles/' + this.userrole + '/users?accessToken=' + this.$parent.access).then(res => {
+              if (res.body.succeed) {
+                this.roleuserlist = res.body.value
+              } else {
+                this.dangermessage(res.body.message)
+              }
+            })
+          }
+        })
+      })
+      this.user = false
+    },
+    deleteusers: function () {
+      var flag = 0
+      this.$refs.userroletable.store.states.selection.forEach(row => {
+        this.$http.post('/api/users/' + row.id + '/roles/del?accessToken=' + this.$parent.access, [this.userrole]).then(res => {
+          flag++
+          if (flag === this.$refs.userroletable.store.states.selection.length - 1) {
+            this.$http.get('/api/roles/' + this.userrole + '/users?accessToken=' + this.$parent.access).then(res => {
+              if (res.body.succeed) {
+                this.successmessage('删除成功')
+                this.roleuserlist = res.body.value
+              } else {
+                this.dangermessage(res.body.message)
+              }
+            })
+          }
+        })
+      })
     }
   },
   created: function () {
     this.getrolelist()
+    this.$http.get('/api/menu?accessToken=' + this.$parent.access).then(res => {
+      if (res.body.succeed) {
+        this.menulist = res.body.value
+      }
+    })
+    this.$http.get('/api/users?accessToken=' + this.$parent.access).then(res => {
+      if (res.body.succeed) {
+        this.userlist = res.body.value
+      }
+    })
   }
 }
 </script>
