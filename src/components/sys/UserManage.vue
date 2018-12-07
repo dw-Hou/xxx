@@ -9,11 +9,10 @@
         <span>用户列表</span>
       </div>
       <el-table
-        ref="multipleTable"
+        ref="usertable"
         :data="userlist"
         tooltip-effect="dark"
-        style="width: 100%"
-        @selection-change="handleSelectionChange">
+        style="width: 100%">
         <el-table-column
           type="selection"
           width="55">
@@ -56,13 +55,13 @@
           <div class="right-span">
             <span>密码：</span>
           </div>
-          <el-input v-model="newuser.pwd1" size="medium" style="width: 300px;"></el-input>
+          <el-input type="password" v-model="newuser.pwd1" size="medium" style="width: 300px;"></el-input>
         </div>
         <div class="input-group">
           <div class="right-span">
             <span>重复密码：</span>
           </div>
-          <el-input v-model="newuser.pwd2" size="medium" style="width: 300px;"></el-input>
+          <el-input type="password" v-model="newuser.pwd2" size="medium" style="width: 300px;"></el-input>
         </div>
       </div>
       <div slot="footer" class="dialog-footer">
@@ -74,15 +73,15 @@
       <div class="dialog">
         <div class="input-group">
           <div class="right-span">
-            <span>工号/学号 :</span>
+            <span>工号/学号：</span>
           </div>
-          <el-input v-model="newuser.schoolId" size="medium" style="width: 300px;"></el-input>
+          <el-input v-model="edituser.schoolId" size="medium" style="width: 300px;"></el-input>
         </div>
         <div class="input-group">
           <div class="right-span">
-            <span>姓名 :</span>
+            <span>姓名：</span>
           </div>
-          <el-input v-model="newuser.name" size="medium" style="width: 300px;"></el-input>
+          <el-input v-model="edituser.name" size="medium" style="width: 300px;"></el-input>
         </div>
       </div>
       <div slot="footer" class="dialog-footer">
@@ -108,110 +107,136 @@ export default {
         pwd2: ''
       },
       edituser: '',
-      editrow: ''
+      editrow: '',
+      newpassword: '',
+      oldpassword: ''
     }
   },
   methods: {
-    openaddwindow: function(){
+    openaddwindow: function () {
       this.addwindow = true
     },
-    adduser: function(){
-      if (this.newuser.schoolId === ''){
-        this.dangermessage("学号不可为空")
+    adduser: function () {
+      if (this.newuser.schoolId === '') {
+        this.dangermessage('学号不可为空')
         return 0
       }
-      if (this.newuser.name === ''){
-        this.dangermessage("名字不可为空")
+      if (this.newuser.name === '') {
+        this.dangermessage('名字不可为空')
         return 0
       }
-      if (this.newuser.pwd1 === ''){
-        this.dangermessage("密码不可为空")
+      if (this.newuser.pwd1 === '') {
+        this.dangermessage('密码不可为空')
+        return 0
       }
-      if (this.newuser.pwd2 === ''){
-        this.dangermessage("请重复输入密码")
+      if (this.newuser.pwd2 === '') {
+        this.dangermessage('请重复输入密码')
+        return 0
       }
-      if (this.newuser.pwd1 !== this.newuser.pwd2){
-        this.dangermessage("两次密码输入不一样")
+      if (this.newuser.pwd1 !== this.newuser.pwd2) {
+        this.dangermessage('两次密码输入不一样')
+        return 0
       }
-      var message = {
-        schoolId: this.schoolId,
-        password: this.pwd2,
-        name: this.name 
+      let mess = {
+        userId: this.newuser.schoolId,
+        password: this.newuser.pwd1,
+        name: this.newuser.name
       }
-      this.$http.post('/api/users?accessToken=' + this.$parent.access, {}).then(res => {
-        console.log(response)
-        if (response.body.succeed){
-          this.$router.push({path: '/index'})
+      this.$http.post('/api/users?accessToken=' + this.$parent.access, mess).then(res => {
+        if (res.body.succeed) {
+          this.successmessage('创建成功')
+          this.getuserlist()
+          this.cancel()
         } else {
-          this.$message({
-            message: response.body.message,
-            type: 'error',
-            showClose: true
-          })
+          this.dangermessage(res.body.message)
         }
-      }, response => {
-        this.$message({
-          message: '连接失败，请检查网络',
-          type: 'error',
-          showClose: true
+      })
+    },
+    deleteall: function () {
+      var flag = false
+      this.$refs.usertable.store.states.selection.forEach(user => {
+        this.$http.delete('/api/users/' + user.id + '?accessToken=' + this.$parent.access).then(res => {
+          if (!res.body.succeed) {
+            flag = true
+          }
         })
       })
+      if (flag) {
+        this.dangermessage('发生错误')
+      } else {
+        this.successmessage('删除成功')
+        this.getuserlist()
+      }
     },
-    deleteall: function(){
-      let flag = false
-      
-    },
-    dangermessage: function(mess){
+    dangermessage: function (mess) {
       this.$message({
         message: mess,
-        type: "error",
-        showClose: true 
-      })
-    },
-    successmessage: function(){
-      this.$message({
-        message: mess,
-        type: "success",
+        type: 'error',
         showClose: true
       })
     },
-    cancel: function(){
+    successmessage: function (mess) {
+      this.$message({
+        message: mess,
+        type: 'success',
+        showClose: true
+      })
+    },
+    cancel: function () {
       this.newuser = {
         schoolId: '',
         name: ''
       }
       this.addwindow = false
     },
-    getuserlist: function(){
+    getuserlist: function () {
       this.$http.get('/api/users?detail=true&accessToken=' + this.$parent.access).then(res => {
         if (res.body.succeed) {
           this.userlist = res.body.value
         }
       })
     },
-    edits: function(){
+    edits: function (index, row) {
       this.editwindow = true
       this.edituser = row
       this.editrow = row
-      console.log(row)
     },
-    canceledit: function(){
-      this.editwindow = false 
+    canceledit: function () {
+      this.editwindow = false
     },
-    saveedit: function(){
-      console.log(this.edituser !== this.row)
-      if (this.edituser !== this.row){
-        this.$http.put('/apt/users?accessToken=' + this.$parent.access).then(res =>{
+    saveedit: function () {
+      if (this.edituser !== this.row) {
+        this.$http.put('/apt/users?accessToken=' + this.$parent.access).then(res => {
           console.log(res)
           if (res.body.succeed) {
-            this.successmessage("修改成功")
+            this.successmessage('修改成功')
             this.getuserlist()
           } else {
             this.dangermessage(res.body.message)
           }
         })
       }
+      // if (this.newpassword !== '') {
+      //   this.$http.put('')
+      // }
+    },
+    deletes: function (index, row) {
+      this.$http.delete('/api/users/' + row.id + '?accessToken=' + this.$parent.access).then(res => {
+        if (res.body.succeed) {
+          this.successmessage('删除成功')
+          this.getuserlist()
+        } else {
+          this.dangermessage(res.body.message)
+        }
+      })
     }
+  },
+  created: function () {
+    this.$http.get('/api/users?accessToken=' + this.$parent.access).then(res => {
+      if (res.body.succeed) {
+        this.userlist = res.body.value
+      }
+    })
   }
 }
 </script>

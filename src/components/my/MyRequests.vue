@@ -227,7 +227,8 @@ export default {
     }
   },
   created: function () {
-    this.$http.get('/api/requests?accessToken=' + this.$parent.access, {poster: this.$parent.userId}).then(res => {
+    console.log(this.$parent.userId)
+    this.$http.post('/api/requests/filter?accessToken=' + this.$parent.access, {poster: this.$parent.userId}).then(res => {
       console.log(res)
       if (res.body.succeed) {
         this.requestlist = res.body.value

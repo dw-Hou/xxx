@@ -182,6 +182,7 @@ export default {
         if (res.body.succeed) {
           this.successmessage('审批成功')
           this.getrequestlist()
+          this.cancel()
         } else {
           this.dangermessage(res.body.message)
         }
@@ -193,6 +194,7 @@ export default {
         if (res.body.succeed) {
           this.successmessage('审批成功')
           this.getrequestlist()
+          this.cancel()
         } else {
           this.dangermessage(res.body.message)
         }

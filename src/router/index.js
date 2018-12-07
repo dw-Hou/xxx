@@ -6,7 +6,7 @@ import Login from '@/components/Login'
 import Register from '@/components/Register'
 import EventManage from '@/components/event/EventManage'
 import ReportManage from '@/components/event/ReportManage'
-import SubmitEvent from '@/components/event/SubmitEvent'
+import CreateReport from '@/components/event/CreateReport'
 import Myprofile from '@/components/my/MyProfile'
 import MyRequests from '@/components/my/MyRequests'
 import MyReview from '@/components/my/MyReview'
@@ -36,7 +36,7 @@ export default new Router({
         {path: '', name: 'He', component: HelloWorld},
         {path: '/EventManage', name: 'EventManage', component: EventManage},
         {path: '/ReportManage', name: 'ReportManage', component: ReportManage},
-        {path: '/SubmitEvent', name: 'SubmitEvent', component: SubmitEvent},
+        {path: '/CreateReport', name: 'CreateReport', component: CreateReport},
         {path: '/Myprofile', name: 'Myprofile', component: Myprofile},
         {path: '/MyReview', name: 'MyReview', component: MyReview},
         {path: '/MyRequests', name: 'MyRequests', component: MyRequests},

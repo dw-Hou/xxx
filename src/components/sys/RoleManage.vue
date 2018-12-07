@@ -1,6 +1,6 @@
 <template>
   <div id="rolemanage">
-    <el-card class="box-card" style="min-width: 600px;margin-bottom: 24px">
+    <el-card class="box-card" style="min-width: 600px;margin-bottom: 24px;margin-right: 24px">
       <div slot="header" class="clearfix">
         <span>角色列表</span>
       </div>
@@ -24,23 +24,21 @@
           width="120">
         </el-table-column>
         <el-table-column
-          prop="status"
-          label="状态"
-          align="center"
-          width="120">
-        </el-table-column>
-        <el-table-column
           align="center"
           label="操作">
           <template slot-scope="scope">
             <el-button
               size="mini"
               type="primary"
-              @click="submit(scope.$index, scope.row)">内容编辑</el-button>
+              @click="submit(scope.$index, scope.row)">编辑</el-button>
             <el-button
               size="mini"
               type="danger"
               @click="handleDelete(scope.$index, scope.row)">权限管理</el-button>
+            <el-button
+              size="mini"
+              type="success"
+              @click="handleDelete(scope.$index, scope.row)">用户添加</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -59,6 +57,7 @@
         :data="rolelist"
         tooltip-effect="dark"
         style="width: 100%"
+        row-key="id"
         @selection-change="handleSelectionChange">
         <el-table-column
           type="selection"
@@ -187,7 +186,8 @@ export default {
     getrolelist: function () {
       this.$http.get('/api/roles?accessToken=' + this.$parent.access).then(res => {
         if (res.body.succeed) {
-          this.rolelist = res.body.value
+          this.rolelist = res.body.value.filter(row => { return row.id !== 52 })
+          console.log(this.rolelist)
         }
       })
     },
@@ -218,11 +218,7 @@ export default {
     }
   },
   created: function () {
-    this.$http.get('/api/roles?accessToken=' + this.$parent.access).then(res => {
-      if (res.body.succeed) {
-        this.rolelist = res.body.value
-      }
-    })
+    this.getrolelist()
   }
 }
 </script>

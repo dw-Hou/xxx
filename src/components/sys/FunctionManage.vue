@@ -98,10 +98,10 @@ export default {
       })
     },
     addability: function () {
-      if (this.newability.name == '') {
-        this.dangermessage('功能名不能为空')
-        return 0
-      }
+      // if (this.newability.name == '') {
+      //   this.dangermessage('功能名不能为空')
+      //   return 0
+      // }
       this.$http.post('/api/abilities?accessToken=' + this.$parent.access, this.newability).then(res => {
         console.log(res)
         if (res.body.succeed) {
@@ -112,7 +112,7 @@ export default {
       })
     },
     getabilitylist: function () {
-      this.$http.get('/api/abilities?accessToken=' + this.$parent.access, this.abilityfilter).then(res => {
+      this.$http.get('/api/menu?accessToken=' + this.$parent.access).then(res => {
         if (res.body.succeed) {
           this.abilitylist = res.body.value
         }
@@ -120,7 +120,8 @@ export default {
     }
   },
   created: function () {
-    this.$http.get('/api/abilities?accessToken=' + this.$parent.access, this.abilityfilter).then(res => {
+    this.$http.get('/api/menu?accessToken=' + this.$parent.access).then(res => {
+      console.log(res)
       if (res.body.succeed) {
         this.abilitylist = res.body.value
       }

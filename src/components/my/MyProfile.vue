@@ -18,6 +18,12 @@
         </div>
         <div class="profile-group">
           <div class="title-block">
+            <span>密码：</span>
+          </div>
+          <el-button type="danger" size="small" @click="changepassword">修改密码</el-button>
+        </div>
+        <div class="profile-group">
+          <div class="title-block">
             <span>学号：</span>
           </div>
           <el-input
@@ -95,6 +101,22 @@
         </div>
       </div>
     </el-card>
+    <el-dialog title="修改密码" :visible.sync="passwordwindow" width="500px" :before-close="cancel">
+      <div class="dialog">
+        <div class="input-group">
+          <span>旧密码：</span>
+          <el-input v-model="oldpassword" type="password" size="medium" style="width: 300px"></el-input>
+        </div>
+        <div class="input-group">
+          <span>新密码：</span>
+          <el-input v-model="newpassword" type="password" size="medium" style="width: 300px"></el-input>
+        </div>
+      </div>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="cancel">取 消</el-button>
+        <el-button @click="savepassword" type="primary">确定修改</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -117,14 +139,17 @@ export default {
         gender: false,
         lab: '',
         college: '',
-        specialty: '',
+        specialty: [],
         class: '',
         phone: '',
         email: ''
       },
       lablist: [],
       collegelist: [],
-      specialty: ''
+      specialty: '',
+      passwordwindow: false,
+      newpassword: '',
+      oldpassword: ''
     }
   },
   created: function () {
@@ -189,6 +214,36 @@ export default {
           })
         }
       })
+    },
+    changepassword: function () {
+      this.passwordwindow = true
+    },
+    cancel: function () {
+      this.passwordwindow = false
+      this.oldpassword = ''
+      this.newpassword = ''
+    },
+    savepassword: function () {
+      var mess = {
+        oldPassword: this.oldpassword,
+        newPassword: this.newpassword
+      }
+      this.$http.put('/api/users/' + this.$parent.userId + '/pwd?accessToken=' + this.$parent.access, mess).then(res => {
+        if (res.body.succeed) {
+          this.$message({
+            message: '修改成功',
+            type: 'success',
+            showClose: true
+          })
+          this.cancel()
+        } else {
+          this.$message({
+            message: res.body.message,
+            type: 'error',
+            showClose: true
+          })
+        }
+      })
     }
   }
 }
@@ -219,5 +274,18 @@ export default {
   }
   .title-block span{
     float: right;
+  }
+  .input-group{
+    display: flex;
+    margin-bottom: 16px;
+    align-items: center;
+  }
+  .input-group:last-child{
+    margin-bottom: 0px;
+  }
+  .dialog{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
 </style>

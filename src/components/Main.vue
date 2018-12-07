@@ -45,6 +45,7 @@
             <el-menu-item index="EventManage"><Icon type="ios-paper" /> 事件管理</el-menu-item>
             <el-menu-item index="ReportManage"><Icon type="md-mail" /> 申报管理</el-menu-item>
             <el-menu-item index="EventList"><Icon type="md-menu" /> 事件列表</el-menu-item>
+            <el-menu-item index="CreateReport"><Icon type="ios-browsers-outline" /> 创建报表</el-menu-item>
           </el-submenu>
           <el-submenu index="3">
             <template slot="title">
