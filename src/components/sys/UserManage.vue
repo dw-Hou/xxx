@@ -208,7 +208,7 @@ export default {
     },
     saveedit: function () {
       if (this.editschoolId !== this.edituser.schoolId || this.editname !== this.edituser.name) {
-        this.$http.put('/api/users?accessToken=' + this.$parent.access, {schoolId: this.editschoolId, name: this.editname}).then(res => {
+        this.$http.put('/api/users?accessToken=' + this.$parent.access, {id: this.edituser.id, schoolId: this.editschoolId, name: this.editname}).then(res => {
           console.log(res)
           if (res.body.succeed) {
             this.successmessage('修改成功')
