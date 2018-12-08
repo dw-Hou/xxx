@@ -23,7 +23,7 @@ export default {
     display: flex;
     justify-content: center;
     align-items: center;
-    background-image: url("../../static/image/login_1.jpg");
+    background-image: url("/static/image/login_1.jpg");
   }
   #window{
     width: 90%;
