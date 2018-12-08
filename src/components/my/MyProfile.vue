@@ -154,7 +154,7 @@ export default {
   },
   created: function () {
     let user = this.$parent.access
-    this.$http.get('/api/users/' + this.$parent.userId + '?accessToken=' + user).then(res => {
+    this.$http.get('http://39.106.109.8:5005/api/users/' + this.$parent.userId + '?accessToken=' + user).then(res => {
       console.log(res)
       this.message = res.body.value
       if (this.message.gender) {
@@ -166,7 +166,7 @@ export default {
         this.specialty = [this.message.college, this.message.specialty]
       }
     })
-    this.$http.get('/api/labs?accessToken=' + this.$parent.access).then(res => {
+    this.$http.get('http://39.106.109.8:5005/api/labs?accessToken=' + this.$parent.access).then(res => {
       // console.log(res)
       if (res.body.succeed) {
         this.lablist = res.body.value
@@ -178,7 +178,7 @@ export default {
         })
       }
     })
-    this.$http.get('/api/colleges/specialties?accessToken=' + this.$parent.access).then(res => {
+    this.$http.get('http://39.106.109.8:5005/api/colleges/specialties?accessToken=' + this.$parent.access).then(res => {
       if (res.body.succeed) {
         this.collegelist = res.body.value
         console.log(this.collegelist)
@@ -197,7 +197,7 @@ export default {
         this.message.college = this.specialty[0]
         this.message.specialty = this.specialty[1]
       }
-      this.$http.put('/api/users?accessToken=' + user, this.message).then(res => {
+      this.$http.put('http://39.106.109.8:5005/api/users?accessToken=' + user, this.message).then(res => {
         console.log(res)
         console.log(this.message)
         if (res.body.succeed) {
@@ -228,7 +228,7 @@ export default {
         oldPassword: this.oldpassword,
         newPassword: this.newpassword
       }
-      this.$http.put('/api/users/' + this.$parent.userId + '/pwd?accessToken=' + this.$parent.access, mess).then(res => {
+      this.$http.put('http://39.106.109.8:5005/api/users/' + this.$parent.userId + '/pwd?accessToken=' + this.$parent.access, mess).then(res => {
         if (res.body.succeed) {
           this.$message({
             message: '修改成功',

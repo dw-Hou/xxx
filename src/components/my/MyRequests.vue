@@ -193,7 +193,7 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        this.$http.delete('/api/requests/' + row.id + '?accessToken=' + this.$parent.access).then(res => {
+        this.$http.delete('http://39.106.109.8:5005/api/requests/' + row.id + '?accessToken=' + this.$parent.access).then(res => {
           if (res.body.succeed) {
             this.successmessage('撤回成功')
           } else {
@@ -228,13 +228,13 @@ export default {
   },
   created: function () {
     console.log(this.$parent.userId)
-    this.$http.post('/api/requests/filter?accessToken=' + this.$parent.access, {poster: this.$parent.userId}).then(res => {
+    this.$http.post('http://39.106.109.8:5005/api/requests/filter?accessToken=' + this.$parent.access, {poster: this.$parent.userId}).then(res => {
       console.log(res)
       if (res.body.succeed) {
         this.requestlist = res.body.value
       }
     })
-    this.$http.get('/api/scopes?accessToken=' + this.$parent.access).then(res => {
+    this.$http.get('http://39.106.109.8:5005/api/scopes?accessToken=' + this.$parent.access).then(res => {
       // console.log(res)
       if (res.body.succeed) {
         this.levels = res.body.value

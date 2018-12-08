@@ -324,7 +324,7 @@ export default {
         return 0
       }
       let url = this.dictionaryurl[this.chosen]
-      this.$http.post('/api/' + url + '?accessToken=' + this.$parent.access, {name: this.keyvalue}).then(res => {
+      this.$http.post('http://39.106.109.8:5005/api/' + url + '?accessToken=' + this.$parent.access, {name: this.keyvalue}).then(res => {
         console.log(res)
         if (res.body.succeed) {
           this.$message({
@@ -358,7 +358,7 @@ export default {
         return 0
       }
       let url = this.dictionaryurl[this.chosen]
-      this.$http.put('/api/' + url + '?accessToken=' + this.$parent.access, {id: this.editid, name: this.editvalue}).then(res => {
+      this.$http.put('http://39.106.109.8:5005/api/' + url + '?accessToken=' + this.$parent.access, {id: this.editid, name: this.editvalue}).then(res => {
         console.log(res)
         if (res.body.succeed) {
           this.$message({
@@ -388,7 +388,7 @@ export default {
       })
     },
     getlab: function () {
-      this.$http.get('/api/labs?accessToken=' + this.$parent.access).then(res => {
+      this.$http.get('http://39.106.109.8:5005/api/labs?accessToken=' + this.$parent.access).then(res => {
         console.log(res)
         if (res.body.succeed) {
           this.lablist = res.body.value
@@ -402,7 +402,7 @@ export default {
       })
     },
     getcollege: function () {
-      this.$http.get('/api/colleges?accessToken=' + this.$parent.access).then(res => {
+      this.$http.get('http://39.106.109.8:5005/api/colleges?accessToken=' + this.$parent.access).then(res => {
         console.log(res)
         if (res.body.succeed) {
           this.collegelist = res.body.value
@@ -416,7 +416,7 @@ export default {
       })
     },
     getaward: function () {
-      this.$http.get('/api/awards?accessToken=' + this.$parent.access).then(res => {
+      this.$http.get('http://39.106.109.8:5005/api/awards?accessToken=' + this.$parent.access).then(res => {
         console.log(res)
         if (res.body.succeed) {
           this.awards = res.body.value
@@ -430,7 +430,7 @@ export default {
       })
     },
     getevent: function () {
-      this.$http.get('/api/scopes?accessToken=' + this.$parent.access).then(res => {
+      this.$http.get('http://39.106.109.8:5005/api/scopes?accessToken=' + this.$parent.access).then(res => {
         console.log(res)
         if (res.body.succeed) {
           this.eventlist = res.body.value
@@ -444,7 +444,7 @@ export default {
       })
     },
     deletes: function (index, row, num) {
-      this.$http.delete('/api/' + this.dictionaryurl[num] + '/' + row.id + '?accessToken=' + this.$parent.access).then(res => {
+      this.$http.delete('http://39.106.109.8:5005/api/' + this.dictionaryurl[num] + '/' + row.id + '?accessToken=' + this.$parent.access).then(res => {
         console.log(res)
         if (res.body.succeed) {
           this.$message({
@@ -494,7 +494,7 @@ export default {
     deletechosen: function (num) {
       var flags = false
       this.deletelist.forEach(row => {
-        this.$http.delete('/api/' + this.dictionaryurl[num] + '/' + row.id + '?accessToken=' + this.$parent.access).then(res => {
+        this.$http.delete('http://39.106.109.8:5005/api/' + this.dictionaryurl[num] + '/' + row.id + '?accessToken=' + this.$parent.access).then(res => {
           if (!res.body.succeed) {
             flags = true
           }
@@ -517,7 +517,7 @@ export default {
       }
     },
     addspecialty: function () {
-      this.$http.post('/api/specialty?accessToken=' + this.$parent.access, {name: this.keyvalue, college: this.specialtyvalue}).then(res => {
+      this.$http.post('http://39.106.109.8:5005/api/specialty?accessToken=' + this.$parent.access, {name: this.keyvalue, college: this.specialtyvalue}).then(res => {
         if (res.body.succeed) {
           this.$message({
             message: '创建成功',
@@ -536,7 +536,7 @@ export default {
       })
     },
     getspecialty: function () {
-      this.$http.get('/api/specialty?accessToken=' + this.$parent.access).then(res => {
+      this.$http.get('http://39.106.109.8:5005/api/specialty?accessToken=' + this.$parent.access).then(res => {
         if (res.body.succeed) {
           this.specialtylist = res.body.value
         }
@@ -553,7 +553,7 @@ export default {
       return flag
     },
     editspecialty: function () {
-      this.$http.put('/api/specialty?accessToken=' + this.$parent.access, {id: this.editid, college: this.specialtyvalue, name: this.editvalue}).then(res => {
+      this.$http.put('http://39.106.109.8:5005/api/specialty?accessToken=' + this.$parent.access, {id: this.editid, college: this.specialtyvalue, name: this.editvalue}).then(res => {
         if (res.body.succeed) {
           this.$message({
             message: '修改成功',

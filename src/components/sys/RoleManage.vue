@@ -195,7 +195,7 @@ export default {
         return 0
       }
       this.rolelist[this.tempclick.index].name = this.editrole.name
-      this.$http.put('/api/roles?accessToken=' + this.$parent.access, this.rolelist[this.tempclick.index]).then(res => {
+      this.$http.put('http://39.106.109.8:5005/api/roles?accessToken=' + this.$parent.access, this.rolelist[this.tempclick.index]).then(res => {
         if (res.body.succeed) {
         }
       })
@@ -219,7 +219,7 @@ export default {
         this.dangermessage('角色名不可为空')
         return 0
       }
-      this.$http.post('/api/roles?accessToken=' + this.$parent.access, this.newrole).then(res => {
+      this.$http.post('http://39.106.109.8:5005/api/roles?accessToken=' + this.$parent.access, this.newrole).then(res => {
         if (res.body.succeed) {
           this.successmessage('创建成功')
           this.getrolelist()
@@ -228,7 +228,7 @@ export default {
       })
     },
     getrolelist: function () {
-      this.$http.get('/api/roles?accessToken=' + this.$parent.access).then(res => {
+      this.$http.get('http://39.106.109.8:5005/api/roles?accessToken=' + this.$parent.access).then(res => {
         if (res.body.succeed) {
           this.rolelist = res.body.value.filter(row => { return row.id !== 52 })
           console.log(this.rolelist)
@@ -239,7 +239,7 @@ export default {
       let flag = false
       // console.log(this.$refs.table.store.states.selection)
       this.$refs.table.store.states.selection.forEach(row => {
-        this.$http.delete('/api/roles/' + row.id + '?accessToken=' + this.$parent.access).then(res => {
+        this.$http.delete('http://39.106.109.8:5005/api/roles/' + row.id + '?accessToken=' + this.$parent.access).then(res => {
           console.log(res)
           if (!res.body.succeed) {
             this.dangermessage(res.body.message)
@@ -263,7 +263,7 @@ export default {
     adduser: function (index, row) {
       this.addu = true
       this.userrole = row.id
-      this.$http.get('/api/roles/' + row.id + '/users?accessToken=' + this.$parent.access).then(res => {
+      this.$http.get('http://39.106.109.8:5005/api/roles/' + row.id + '/users?accessToken=' + this.$parent.access).then(res => {
         if (res.body.succeed) {
           this.roleuserlist = res.body.value
         } else {
@@ -274,7 +274,7 @@ export default {
     menu: function (index, row) {
       this.menumanage = true
       this.activerole = row.id
-      this.$http.get('/api/roles/' + row.id + '/menu?accessToken=' + this.$parent.access).then(res => {
+      this.$http.get('http://39.106.109.8:5005/api/roles/' + row.id + '/menu?accessToken=' + this.$parent.access).then(res => {
         if (res.body.succeed) {
           var a = []
           var i = 0
@@ -294,7 +294,7 @@ export default {
     menuchange: function () {
       var flag = false
       if (this.activemenu.length > 0) {
-        this.$http.post('/api/roles/' + this.activerole + '/menu/del?accessToken=' + this.$parent.access, this.activemenu).then(res => {
+        this.$http.post('http://39.106.109.8:5005/api/roles/' + this.activerole + '/menu/del?accessToken=' + this.$parent.access, this.activemenu).then(res => {
           // console.log(res)
           if (!res.body.succeed) {
             flag = true
@@ -304,7 +304,7 @@ export default {
             this.$refs.tree.getCheckedNodes().forEach(node => {
               a[i++] = node.value
             })
-            this.$http.post('/api/roles/' + this.activerole + '/menu?accessToken=' + this.$parent.access, a).then(res => {
+            this.$http.post('http://39.106.109.8:5005/api/roles/' + this.activerole + '/menu?accessToken=' + this.$parent.access, a).then(res => {
               // console.log(res)
               if (!res.body.succeed || flag) {
                 this.dangermessage('出现错误')
@@ -320,7 +320,7 @@ export default {
         this.$refs.tree.getCheckedNodes().forEach(node => {
           a[i++] = node.value
         })
-        this.$http.post('/api/roles/' + this.activerole + '/menu?accessToken=' + this.$parent.access, a).then(res => {
+        this.$http.post('http://39.106.109.8:5005/api/roles/' + this.activerole + '/menu?accessToken=' + this.$parent.access, a).then(res => {
           // console.log(res)
           if (!res.body.succeed || flag) {
             this.dangermessage('出现错误')
@@ -341,10 +341,10 @@ export default {
       var flag = 0
       console.log(this.userrole)
       this.$refs.usertable.store.states.selection.forEach(row => {
-        this.$http.post('/api/users/' + row.id + '/roles?accessToken=' + this.$parent.access, [this.userrole]).then(res => {
+        this.$http.post('http://39.106.109.8:5005/api/users/' + row.id + '/roles?accessToken=' + this.$parent.access, [this.userrole]).then(res => {
           flag++
           if (flag === this.$refs.usertable.store.states.selection.length - 1) {
-            this.$http.get('/api/roles/' + this.userrole + '/users?accessToken=' + this.$parent.access).then(res => {
+            this.$http.get('http://39.106.109.8:5005/api/roles/' + this.userrole + '/users?accessToken=' + this.$parent.access).then(res => {
               if (res.body.succeed) {
                 this.roleuserlist = res.body.value
               } else {
@@ -359,10 +359,10 @@ export default {
     deleteusers: function () {
       var flag = 0
       this.$refs.userroletable.store.states.selection.forEach(row => {
-        this.$http.post('/api/users/' + row.id + '/roles/del?accessToken=' + this.$parent.access, [this.userrole]).then(res => {
+        this.$http.post('http://39.106.109.8:5005/api/users/' + row.id + '/roles/del?accessToken=' + this.$parent.access, [this.userrole]).then(res => {
           flag++
           if (flag === this.$refs.userroletable.store.states.selection.length - 1) {
-            this.$http.get('/api/roles/' + this.userrole + '/users?accessToken=' + this.$parent.access).then(res => {
+            this.$http.get('http://39.106.109.8:5005/api/roles/' + this.userrole + '/users?accessToken=' + this.$parent.access).then(res => {
               if (res.body.succeed) {
                 this.successmessage('删除成功')
                 this.roleuserlist = res.body.value
@@ -377,12 +377,12 @@ export default {
   },
   created: function () {
     this.getrolelist()
-    this.$http.get('/api/menu?accessToken=' + this.$parent.access).then(res => {
+    this.$http.get('http://39.106.109.8:5005/api/menu?accessToken=' + this.$parent.access).then(res => {
       if (res.body.succeed) {
         this.menulist = res.body.value
       }
     })
-    this.$http.get('/api/users?accessToken=' + this.$parent.access).then(res => {
+    this.$http.get('http://39.106.109.8:5005/api/users?accessToken=' + this.$parent.access).then(res => {
       if (res.body.succeed) {
         this.userlist = res.body.value
       }

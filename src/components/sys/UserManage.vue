@@ -143,7 +143,7 @@ export default {
         password: this.newuser.pwd1,
         name: this.newuser.name
       }
-      this.$http.post('/api/users?accessToken=' + this.$parent.access, mess).then(res => {
+      this.$http.post('http://39.106.109.8:5005/api/users?accessToken=' + this.$parent.access, mess).then(res => {
         if (res.body.succeed) {
           this.successmessage('创建成功')
           this.getuserlist()
@@ -156,7 +156,7 @@ export default {
     deleteall: function () {
       var flag = false
       this.$refs.usertable.store.states.selection.forEach(user => {
-        this.$http.delete('/api/users/' + user.id + '?accessToken=' + this.$parent.access).then(res => {
+        this.$http.delete('http://39.106.109.8:5005/api/users/' + user.id + '?accessToken=' + this.$parent.access).then(res => {
           if (!res.body.succeed) {
             flag = true
           }
@@ -191,7 +191,7 @@ export default {
       this.addwindow = false
     },
     getuserlist: function () {
-      this.$http.get('/api/users?detail=true&accessToken=' + this.$parent.access).then(res => {
+      this.$http.get('http://39.106.109.8:5005/api/users?detail=true&accessToken=' + this.$parent.access).then(res => {
         if (res.body.succeed) {
           this.userlist = res.body.value
         }
@@ -208,7 +208,7 @@ export default {
     },
     saveedit: function () {
       if (this.editschoolId !== this.edituser.schoolId || this.editname !== this.edituser.name) {
-        this.$http.put('/api/users?accessToken=' + this.$parent.access, {id: this.edituser.id, schoolId: this.editschoolId, name: this.editname}).then(res => {
+        this.$http.put('http://39.106.109.8:5005/api/users?accessToken=' + this.$parent.access, {id: this.edituser.id, schoolId: this.editschoolId, name: this.editname}).then(res => {
           console.log(res)
           if (res.body.succeed) {
             this.successmessage('修改成功')
@@ -220,7 +220,7 @@ export default {
       }
     },
     deletes: function (index, row) {
-      this.$http.delete('/api/users/' + row.id + '?accessToken=' + this.$parent.access).then(res => {
+      this.$http.delete('http://39.106.109.8:5005/api/users/' + row.id + '?accessToken=' + this.$parent.access).then(res => {
         if (res.body.succeed) {
           this.successmessage('删除成功')
           this.getuserlist()
@@ -231,7 +231,7 @@ export default {
     }
   },
   created: function () {
-    this.$http.get('/api/users?accessToken=' + this.$parent.access).then(res => {
+    this.$http.get('http://39.106.109.8:5005/api/users?accessToken=' + this.$parent.access).then(res => {
       if (res.body.succeed) {
         this.userlist = res.body.value
       }

@@ -178,7 +178,7 @@ export default {
         this.dangermessage('驳回请输入理由')
         return 0
       }
-      this.$http.post('/api/requests/review?accessToken=' + this.$parent.access, {request: this.request.id, accepted: false, comment: this.assess}).then(res => {
+      this.$http.post('http://39.106.109.8:5005/api/requests/review?accessToken=' + this.$parent.access, {request: this.request.id, accepted: false, comment: this.assess}).then(res => {
         if (res.body.succeed) {
           this.successmessage('审批成功')
           this.getrequestlist()
@@ -189,7 +189,7 @@ export default {
       })
     },
     pass: function () {
-      this.$http.post('/api/requests/review?accessToken=' + this.$parent.access, {request: this.request.id, accepted: true}).then(res => {
+      this.$http.post('http://39.106.109.8:5005/api/requests/review?accessToken=' + this.$parent.access, {request: this.request.id, accepted: true}).then(res => {
         console.log(res)
         if (res.body.succeed) {
           this.successmessage('审批成功')
@@ -233,7 +233,7 @@ export default {
       return 'danger'
     },
     getrequestlist: function () {
-      this.$http.get('/api/requests?accessToken=' + this.$parent.access).then(res => {
+      this.$http.get('http://39.106.109.8:5005/api/requests?accessToken=' + this.$parent.access).then(res => {
         console.log(res)
         if (res.body.succeed) {
           this.requestlist = res.body.value
@@ -243,7 +243,7 @@ export default {
   },
   created: function () {
     this.getrequestlist()
-    this.$http.get('/api/scopes?accessToken=' + this.$parent.access).then(res => {
+    this.$http.get('http://39.106.109.8:5005/api/scopes?accessToken=' + this.$parent.access).then(res => {
       // console.log(res)
       if (res.body.succeed) {
         this.levels = res.body.value

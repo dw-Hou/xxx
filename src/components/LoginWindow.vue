@@ -72,7 +72,7 @@ export default {
         })
         return 0
       }
-      this.$http.post('/api/auth', {userId: this.username, password: this.password}).then(response => {
+      this.$http.post('http://39.106.109.8:5005/api/auth', {userId: this.username, password: this.password}).then(response => {
         console.log(response)
         if (response.body.succeed) {
           dao.setCookie('ACCESS_TOKEN', response.body.value.accessToken)

@@ -238,10 +238,10 @@ export default {
         this.dangermessage('奖项选择不可为空')
         return 0
       }
-      this.$http.post('/api/events?accessToken=' + this.$parent.access, this.newevent).then(res => {
+      this.$http.post('http://39.106.109.8:5005/api/events?accessToken=' + this.$parent.access, this.newevent).then(res => {
         if (res.body.succeed) {
           let index = res.body.value
-          this.$http.post('/api/events/' + index + '/awards?accessToken=' + this.$parent.access, this.eventaward).then(res => {
+          this.$http.post('http://39.106.109.8:5005/api/events/' + index + '/awards?accessToken=' + this.$parent.access, this.eventaward).then(res => {
             console.log(res)
             if (res.body.succeed) {
               this.successmessage('创建成功')
@@ -282,14 +282,14 @@ export default {
       }
     },
     geteventlist: function () {
-      this.$http.get('/api/events?detail=true&accessToken=' + this.$parent.access).then(res => {
+      this.$http.get('http://39.106.109.8:5005/api/events?detail=true&accessToken=' + this.$parent.access).then(res => {
         if (res.body.succeed) {
           this.eventlist = res.body.value
         }
       })
     },
     deletes: function (index, row) {
-      this.$http.delete('/api/events/' + row.id + '?accessToken=' + this.$parent.access).then(res => {
+      this.$http.delete('http://39.106.109.8:5005/api/events/' + row.id + '?accessToken=' + this.$parent.access).then(res => {
         if (res.body.succeed) {
           this.geteventlist()
           this.successmessage('删除成功')
@@ -320,7 +320,7 @@ export default {
     saveedit: function () {
       console.log(this.editevent !== this.row)
       if (this.editevent !== this.row) {
-        this.$http.put('/api/events?accessToken=' + this.$parent.access).then(res => {
+        this.$http.put('http://39.106.109.8:5005/api/events?accessToken=' + this.$parent.access).then(res => {
           console.log(res)
           if (res.body.succeed) {
             this.successmessage('修改成功')
@@ -334,7 +334,7 @@ export default {
     deleteall: function () {
       let flag = false
       this.$refs.eventTable.store.states.selection.forEach(row => {
-        this.$http.delete('/api/events/' + row.id + '?accessToken=' + this.$parent.access).then(res => {
+        this.$http.delete('http://39.106.109.8:5005/api/events/' + row.id + '?accessToken=' + this.$parent.access).then(res => {
           if (!res.body.succeed) {
             this.dangermessage(res.body.message)
             flag = true
@@ -348,19 +348,19 @@ export default {
     }
   },
   created: function () {
-    this.$http.get('/api/scopes?accessToken=' + this.$parent.access).then(res => {
+    this.$http.get('http://39.106.109.8:5005/api/scopes?accessToken=' + this.$parent.access).then(res => {
       // console.log(res)
       if (res.body.succeed) {
         this.levels = res.body.value
       }
     })
-    this.$http.get('/api/awards?accessToken=' + this.$parent.access).then(res => {
+    this.$http.get('http://39.106.109.8:5005/api/awards?accessToken=' + this.$parent.access).then(res => {
       // console.log(res)
       if (res.body.succeed) {
         this.awards = res.body.value
       }
     })
-    this.$http.get('/api/events?detail=true&accessToken=' + this.$parent.access).then(res => {
+    this.$http.get('http://39.106.109.8:5005/api/events?detail=true&accessToken=' + this.$parent.access).then(res => {
       console.log(res)
       if (res.body.succeed) {
         this.eventlist = res.body.value

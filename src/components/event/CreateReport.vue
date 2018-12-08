@@ -312,7 +312,7 @@ export default {
       this.columncancel()
     },
     finish: function () {
-      this.$http.post('/api/reports?accessToken=' + this.$parent.access, {name: Math.random().toString(36).substring(2)}).then(res => {
+      this.$http.post('http://39.106.109.8:5005/api/reports?accessToken=' + this.$parent.access, {name: Math.random().toString(36).substring(2)}).then(res => {
         var ids
         console.log(res)
         if (res.body.succeed) {
@@ -323,14 +323,14 @@ export default {
           this.choseneventlist.forEach(event => {
             a[i++] = event.id
           })
-          this.$http.post('/api/reports/' + ids + '/events?accessToken=' + this.$parent.access, a).then(res => {
+          this.$http.post('http://39.106.109.8:5005/api/reports/' + ids + '/events?accessToken=' + this.$parent.access, a).then(res => {
             if (res.body.succeed) {
               var b = []
               var i = 0
               this.chosencolumnlist.forEach(column => {
                 b[i++] = column.id
               })
-              this.$http.post('/api/reports/' + ids + '/columns?accessToken=' + this.$parent.access, b).then(res => {
+              this.$http.post('http://39.106.109.8:5005/api/reports/' + ids + '/columns?accessToken=' + this.$parent.access, b).then(res => {
                 if (res.body.succeed) {
                   let url = 'http://39.106.109.8:5005/api/reports/' + ids + '/file?accessToken=' + this.$parent.access
                   window.location.href = url
@@ -349,18 +349,18 @@ export default {
     }
   },
   created: function () {
-    this.$http.get('/api/events?accessToken=' + this.$parent.access).then(res => {
+    this.$http.get('http://39.106.109.8:5005/api/events?accessToken=' + this.$parent.access).then(res => {
       if (res.body.succeed) {
         this.eventlist = res.body.value
         console.log(this.eventlist)
       }
     })
-    this.$http.get('/api/scopes?accessToken=' + this.$parent.access).then(res => {
+    this.$http.get('http://39.106.109.8:5005/api/scopes?accessToken=' + this.$parent.access).then(res => {
       if (res.body.succeed) {
         this.levels = res.body.value
       }
     })
-    this.$http.get('/api/reports/columns?accessToken=' + this.$parent.access).then(res => {
+    this.$http.get('http://39.106.109.8:5005/api/reports/columns?accessToken=' + this.$parent.access).then(res => {
       console.log(res)
       if (res.body.succeed) {
         this.columnlist = res.body.value

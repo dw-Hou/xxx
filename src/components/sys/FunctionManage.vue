@@ -98,7 +98,7 @@ export default {
     },
     addmenu: function () {
       if (this.leave) {
-        this.$http.post('/api/menu?accessToken=' + this.$parent.access, {name: this.name, fatherid: this.gen}).then(res => {
+        this.$http.post('http://39.106.109.8:5005/api/menu?accessToken=' + this.$parent.access, {name: this.name, fatherid: this.gen}).then(res => {
           if (res.body.succeed) {
             this.successmessage('添加成功')
             this.getmenulist()
@@ -108,7 +108,7 @@ export default {
           }
         })
       } else {
-        this.$http.post('/api/menu?accessToken=' + this.$parent.access, {name: this.name, fatherid: null}).then(res => {
+        this.$http.post('http://39.106.109.8:5005/api/menu?accessToken=' + this.$parent.access, {name: this.name, fatherid: null}).then(res => {
           if (res.body.succeed) {
             this.successmessage('添加成功')
             this.getmenulist()
@@ -120,7 +120,7 @@ export default {
       }
     },
     getmenulist: function () {
-      this.$http.get('/api/menu?accessToken=' + this.$parent.access).then(res => {
+      this.$http.get('http://39.106.109.8:5005/api/menu?accessToken=' + this.$parent.access).then(res => {
         if (res.body.succeed) {
           this.menulist = res.body.value
         }
@@ -132,7 +132,7 @@ export default {
     deleteall: function () {
       var flag = false
       this.$refs.tree.getCheckedNodes().forEach(row => {
-        this.$http.delete('/api/menu/' + row.value + '?accessToken=' + this.$parent.access).then(res => {
+        this.$http.delete('http://39.106.109.8:5005/api/menu/' + row.value + '?accessToken=' + this.$parent.access).then(res => {
           if (!res.body.succeed) {
             flag = true
           }
@@ -147,7 +147,7 @@ export default {
     }
   },
   created: function () {
-    this.$http.get('/api/menu?accessToken=' + this.$parent.access).then(res => {
+    this.$http.get('http://39.106.109.8:5005/api/menu?accessToken=' + this.$parent.access).then(res => {
       if (res.body.succeed) {
         this.menulist = res.body.value
       }

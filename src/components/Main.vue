@@ -122,13 +122,13 @@ export default {
   created: function () {
     this.access = dao.getCookie('ACCESS_TOKEN')
     this.userId = dao.getCookie('ACCESS_USERID')
-    this.$http.get('/api/users/' + this.userId + '?accessToken=' + this.access).then(res => {
+    this.$http.get('http://39.106.109.8:5005/api/users/' + this.userId + '?accessToken=' + this.access).then(res => {
       console.log(res)
       if (res.body.succeed) {
         this.realname = res.body.value.name
       }
     })
-    this.$http.get('/api/users/' + this.userId + '/menu?accessToken=' + this.access).then(res => {
+    this.$http.get('http://39.106.109.8:5005/api/users/' + this.userId + '/menu?accessToken=' + this.access).then(res => {
       res.body.value.forEach(row => {
         this.test[row.value] = 1
         if (row.children.length > 0) {

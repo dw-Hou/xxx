@@ -116,19 +116,19 @@ export default {
     }
   },
   created: function () {
-    this.$http.get('/api/scopes?accessToken=' + this.$parent.access).then(res => {
+    this.$http.get('http://39.106.109.8:5005/api/scopes?accessToken=' + this.$parent.access).then(res => {
       // console.log(res)
       if (res.body.succeed) {
         this.levels = res.body.value
       }
     })
-    this.$http.get('/api/awards?accessToken=' + this.$parent.access).then(res => {
+    this.$http.get('http://39.106.109.8:5005/api/awards?accessToken=' + this.$parent.access).then(res => {
       // console.log(res)
       if (res.body.succeed) {
         this.awards = res.body.value
       }
     })
-    this.$http.get('/api/events?detail=true&accessToken=' + this.$parent.access).then(res => {
+    this.$http.get('http://39.106.109.8:5005/api/events?detail=true&accessToken=' + this.$parent.access).then(res => {
       console.log(res)
       if (res.body.succeed) {
         this.eventlist = res.body.value
@@ -184,7 +184,7 @@ export default {
         awardId: this.value
       }
       console.log(request)
-      this.$http.post('/api/requests?accessToken=' + this.$parent.access, request).then(res => {
+      this.$http.post('http://39.106.109.8:5005/api/requests?accessToken=' + this.$parent.access, request).then(res => {
         console.log(res)
         if (res.body.succeed) {
           this.successmessage('申报成功')

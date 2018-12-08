@@ -94,7 +94,7 @@ export default {
         name: this.realname
       }
       console.log(message)
-      this.$http.post('/api/users', message).then(response => {
+      this.$http.post('http://39.106.109.8:5005/api/users', message).then(response => {
         console.log(response)
         if (response.body.succeed) {
           this.$message({
