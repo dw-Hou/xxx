@@ -16,9 +16,21 @@ import LogManage from '@/components/sys/LogManage'
 import RoleManage from '@/components/sys/RoleManage'
 import UserManage from '@/components/sys/UserManage'
 import EventList from '@/components/event/EventList'
+import * as dao from '../components/store/dao'
 
 Vue.use(Router)
 // Vue.use(VueResource)
+
+function requireAuth (to, from, next) {
+  if (!dao.getCookie('ACCESS_TOKEN')) {
+    // window.localStorage.getItem(constant.APP_USER_TOKEN)
+    next({
+      path: '/login'
+    })
+  } else {
+    next()
+  }
+}
 
 export default new Router({
   mode: 'history',
@@ -26,26 +38,27 @@ export default new Router({
     {
       path: '/',
       name: 'HelloWorld',
-      component: HelloWorld
+      component: Login,
+      beforeEnter: requireAuth
     },
     {
       path: '/index',
       name: 'Main',
       component: Main,
       children: [
-        {path: '', name: 'He', component: HelloWorld},
-        {path: '/EventManage', name: 'EventManage', component: EventManage},
-        {path: '/ReportManage', name: 'ReportManage', component: ReportManage},
-        {path: '/CreateReport', name: 'CreateReport', component: CreateReport},
-        {path: '/Myprofile', name: 'Myprofile', component: Myprofile},
-        {path: '/MyReview', name: 'MyReview', component: MyReview},
-        {path: '/MyRequests', name: 'MyRequests', component: MyRequests},
-        {path: '/FunctionManage', name: 'FunctionManage', component: FunctionManage},
-        {path: '/LabManage', name: 'LabManage', component: LabManage},
-        {path: '/LogManage', name: 'LogManage', component: LogManage},
-        {path: '/RoleManage', name: 'RoleManage', component: RoleManage},
-        {path: '/UserManage', name: 'UserManage', component: UserManage},
-        {path: '/EventList', name: 'EventList', component: EventList}
+        {path: '', name: 'He', component: HelloWorld, beforeEnter: requireAuth},
+        {path: '/EventManage', name: 'EventManage', component: EventManage, beforeEnter: requireAuth},
+        {path: '/ReportManage', name: 'ReportManage', component: ReportManage, beforeEnter: requireAuth},
+        {path: '/CreateReport', name: 'CreateReport', component: CreateReport, beforeEnter: requireAuth},
+        {path: '/Myprofile', name: 'Myprofile', component: Myprofile, beforeEnter: requireAuth},
+        {path: '/MyReview', name: 'MyReview', component: MyReview, beforeEnter: requireAuth},
+        {path: '/MyRequests', name: 'MyRequests', component: MyRequests, beforeEnter: requireAuth},
+        {path: '/FunctionManage', name: 'FunctionManage', component: FunctionManage, beforeEnter: requireAuth},
+        {path: '/LabManage', name: 'LabManage', component: LabManage, beforeEnter: requireAuth},
+        {path: '/LogManage', name: 'LogManage', component: LogManage, beforeEnter: requireAuth},
+        {path: '/RoleManage', name: 'RoleManage', component: RoleManage, beforeEnter: requireAuth},
+        {path: '/UserManage', name: 'UserManage', component: UserManage, beforeEnter: requireAuth},
+        {path: '/EventList', name: 'EventList', component: EventList, beforeEnter: requireAuth}
       ]
     },
     {
