@@ -320,11 +320,12 @@ export default {
     saveedit: function () {
       console.log(this.editevent !== this.row)
       if (this.editevent !== this.row) {
-        this.$http.put('http://39.106.109.8:5005/api/events?accessToken=' + this.$parent.access).then(res => {
+        this.$http.put('http://39.106.109.8:5005/api/events?accessToken=' + this.$parent.access, this.editevent).then(res => {
           console.log(res)
           if (res.body.succeed) {
             this.successmessage('修改成功')
             this.geteventlist()
+            this.canceledit()
           } else {
             this.dangermessage(res.body.message)
           }
