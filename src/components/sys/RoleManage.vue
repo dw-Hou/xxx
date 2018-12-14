@@ -12,6 +12,7 @@
         ref="table"
         :data="rolelist"
         tooltip-effect="dark"
+        row-key="id"
         style="width: 100%">
         <el-table-column
           type="selection"
@@ -244,11 +245,12 @@ export default {
           if (!res.body.succeed) {
             this.dangermessage(res.body.message)
             flag = true
+          } else {
+            this.getrolelist()
           }
         })
       })
       if (!flag) {
-        this.getrolelist()
         this.successmessage('删除成功')
       }
     },
@@ -346,6 +348,7 @@ export default {
           if (flag === this.$refs.usertable.store.states.selection.length - 1) {
             this.$http.get('http://39.106.109.8:5005/api/roles/' + this.userrole + '/users?accessToken=' + this.$parent.access).then(res => {
               if (res.body.succeed) {
+                this.successmessage('添加成功')
                 this.roleuserlist = res.body.value
               } else {
                 this.dangermessage(res.body.message)

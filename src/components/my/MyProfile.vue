@@ -206,6 +206,18 @@ export default {
             type: 'success',
             showClose: true
           })
+          this.$http.get('http://39.106.109.8:5005/api/users/' + this.$parent.userId + '?accessToken=' + user).then(res => {
+            console.log(res)
+            this.message = res.body.value
+            if (this.message.gender) {
+              this.gender = '1'
+            } else {
+              this.gender = '0'
+            }
+            if (this.message.specialty) {
+              this.specialty = [this.message.college, this.message.specialty]
+            }
+          })
         } else {
           this.$message({
             message: res.body.message,
@@ -228,6 +240,14 @@ export default {
         oldPassword: this.oldpassword,
         newPassword: this.newpassword
       }
+      if (this.oldpassword === '') {
+        this.dangermessage('请输入旧密码')
+        return 0
+      }
+      if (this.newpassword === '') {
+        this.dangermessage('请输入新密码')
+        return 0
+      }
       this.$http.put('http://39.106.109.8:5005/api/users/' + this.$parent.userId + '/pwd?accessToken=' + this.$parent.access, mess).then(res => {
         if (res.body.succeed) {
           this.$message({
@@ -237,12 +257,22 @@ export default {
           })
           this.cancel()
         } else {
-          this.$message({
-            message: res.body.message,
-            type: 'error',
-            showClose: true
-          })
+          this.dangermessage('旧密码不正确')
         }
+      })
+    },
+    dangermessage: function (mess) {
+      this.$message({
+        message: mess,
+        type: 'error',
+        showClose: true
+      })
+    },
+    successmessage: function (mess) {
+      this.$message({
+        message: mess,
+        type: 'success',
+        showClose: true
       })
     }
   }

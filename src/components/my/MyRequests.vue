@@ -56,7 +56,7 @@
         <el-table-column
           label="操作"
           align="center"
-          width="150">
+          width="200">
           <template slot-scope="scope">
             <el-button
               size="mini"
@@ -196,6 +196,12 @@ export default {
         this.$http.delete('http://39.106.109.8:5005/api/requests/' + row.id + '?accessToken=' + this.$parent.access).then(res => {
           if (res.body.succeed) {
             this.successmessage('撤回成功')
+            this.$http.post('http://39.106.109.8:5005/api/requests/filter?accessToken=' + this.$parent.access, {poster: this.$parent.userId}).then(res => {
+              console.log(res)
+              if (res.body.succeed) {
+                this.requestlist = res.body.value
+              }
+            })
           } else {
             this.dangermessage(res.body.message)
           }

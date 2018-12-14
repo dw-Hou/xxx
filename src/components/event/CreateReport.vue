@@ -316,7 +316,6 @@ export default {
         var ids
         console.log(res)
         if (res.body.succeed) {
-          console.log('aaa')
           ids = res.body.value
           var a = []
           var i = 0
@@ -333,7 +332,7 @@ export default {
               this.$http.post('http://39.106.109.8:5005/api/reports/' + ids + '/columns?accessToken=' + this.$parent.access, b).then(res => {
                 if (res.body.succeed) {
                   let url = 'http://39.106.109.8:5005/api/reports/' + ids + '/file?accessToken=' + this.$parent.access
-                  window.location.href = url
+                  window.open(url)
                 } else {
                   this.dangermessage('创建失败')
                 }

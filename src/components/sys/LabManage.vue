@@ -48,7 +48,7 @@
         </div>
         <div class="button-group">
           <el-button type="success" size="small" @click="addLab(1)">添加字典</el-button>
-          <el-button type="danger" size="small" @click="deleteall(0)">删除字典</el-button>
+          <el-button type="danger" size="small" @click="deleteall(1)">删除字典</el-button>
         </div>
         <el-table
           ref="table2"
@@ -138,7 +138,7 @@
         </div>
         <div class="button-group">
           <el-button type="success" size="small" @click="addLab(3)">添加字典</el-button>
-          <el-button type="danger" size="small" @click="deleteall(0)">删除字典</el-button>
+          <el-button type="danger" size="small" @click="deleteall(3)">删除字典</el-button>
         </div>
         <el-table
           ref="table4"
@@ -179,7 +179,7 @@
         </div>
         <div class="button-group">
           <el-button type="success" size="small" @click="addLab(4)">添加字典</el-button>
-          <el-button type="danger" size="small" @click="deleteall(0)">删除字典</el-button>
+          <el-button type="danger" size="small" @click="deleteall(4)">删除字典</el-button>
         </div>
         <el-table
           ref="table5"
@@ -497,6 +497,14 @@ export default {
         this.$http.delete('http://39.106.109.8:5005/api/' + this.dictionaryurl[num] + '/' + row.id + '?accessToken=' + this.$parent.access).then(res => {
           if (!res.body.succeed) {
             flags = true
+          } else {
+            switch (num) {
+              case 0: { this.getlab(); break }
+              case 1: { this.getcollege(); break }
+              case 2: { this.getspecialty(); break }
+              case 3: { this.getaward(); break }
+              case 4: { this.getevent(); break }
+            }
           }
         })
       })
@@ -507,13 +515,11 @@ export default {
           showClose: true
         })
       } else {
-        switch (num) {
-          case 0: { this.getlab(); break }
-          case 1: { this.getcollege(); break }
-          case 2: { this.getspecialty(); break }
-          case 3: { this.getaward(); break }
-          case 4: { this.getevent(); break }
-        }
+        this.$message({
+          message: '删除成功',
+          type: 'success',
+          showClose: true
+        })
       }
     },
     addspecialty: function () {

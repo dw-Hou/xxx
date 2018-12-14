@@ -339,11 +339,12 @@ export default {
           if (!res.body.succeed) {
             this.dangermessage(res.body.message)
             flag = true
+          } else {
+            this.geteventlist()
           }
         })
       })
       if (!flag) {
-        this.geteventlist()
         this.successmessage('删除成功')
       }
     }

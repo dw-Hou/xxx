@@ -190,7 +190,7 @@ export default {
           this.successmessage('申报成功')
           this.cancel()
         } else {
-          this.dangermessage(res.body.message)
+          this.dangermessage('已完成申报，请勿重复申报，如要重复申报请先撤回原有申报')
         }
       })
     },
